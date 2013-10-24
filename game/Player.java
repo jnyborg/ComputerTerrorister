@@ -14,6 +14,23 @@ public Player (String name) {
 	point = 0;
 	direction = "up";
 }
+
+
+public String getName() {
+	return name;
+}
+
+
+public void setName(String name) {
+	this.name = name;
+}
+
+
+public void setPoint(int point) {
+	this.point = point;
+}
+
+
 public int getPoint() {
 	return point;
 }

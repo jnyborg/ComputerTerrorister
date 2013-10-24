@@ -68,9 +68,8 @@ public class gameplayer {
 		this.players =players;
 		this.me = me;
 		this.slist = s;
-		screen = new Screen(level,me.getXpos(),me.getYpos());
+		screen = new Screen();
 		screen.setVisible(true);	
-		ko = new KeyClass(this);
 		screen.addKeyListener(ko); 
 	}
 

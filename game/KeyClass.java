@@ -2,27 +2,28 @@ package game;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
+import client.GameClient;
 
 public class KeyClass implements KeyListener {
-	private gameplayer g;
+	private GameClient g;
 	
-	public KeyClass(gameplayer g){
+	public KeyClass(GameClient g){
 		this.g = g;
 	}
 
 		public void keyPressed(KeyEvent ke) {
 			if (ke.getKeyCode() == ke.VK_UP) {
-				g.PlayerMoved("up");
+				g.movePlayer("up");
 			}
 
 			if (ke.getKeyCode() == ke.VK_DOWN) {
-				g.PlayerMoved("down");
+				g.movePlayer("down");
 			}
 			if (ke.getKeyCode() == ke.VK_LEFT) {
-				g.PlayerMoved("left");
+				g.movePlayer("left");
 			}
 			if (ke.getKeyCode() == ke.VK_RIGHT) {
-				g.PlayerMoved("right");
+				g.movePlayer("right");
 			}
 	}
 

@@ -1,13 +1,16 @@
 package client;
 
+import game.KeyClass;
+import game.Player;
+import game.Screen;
+
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
-
-import server.ClientThread;
+import java.util.ArrayList;
 
 public class GameClient implements Runnable {
 	private static DataOutputStream output;
@@ -19,11 +22,15 @@ public class GameClient implements Runnable {
 	//input from user
 	private static BufferedReader inputLine;
 	private static boolean closed;
+	private KeyClass keyClass;
+	private Player player;
+	private ArrayList<Player> otherPlayers = new ArrayList<Player>();
+	private Screen screen = new Screen();
 
 	public static void main(String[] args) {
 		//default host and port
 		host = "localhost";
-		port = 90210;	
+		port = 3000;	
 
 		/*
 		 * Check the args length, so the user can input host + port by the console
@@ -58,8 +65,7 @@ public class GameClient implements Runnable {
 
 				new Thread(new GameClient()).start();
 				while(!closed) {
-
-					System.out.println("di puta de madonna");
+					
 				}
 
 
@@ -79,19 +85,61 @@ public class GameClient implements Runnable {
 		String responseLine;
 		try {
 			while ((responseLine = input.readLine()) != null) {
-				System.out.println(responseLine);
-				if (responseLine.equals("her er dit navn")) {
-					String playerName = responseLine.substring(10);
-					game.Player player = new game.Player(playerName);
-				} else if (responseLine.equals("position, playername")) {
-					game.Screen screen = new game.Screen();
+				
+				if(responseLine.startsWith("p:")){
+					String[] info = responseLine.split(",");
+					String playerName = info[0].substring(3);
+					int xPos = Integer.parseInt(info[1]);
+					int yPos = Integer.parseInt(info[2]);
+					String direction = info[3];
 					
+					if(playerName == player.getName()){
+						screen.movePlayerOnScreen(player.getXpos(), player.getYpos(), xPos, yPos, direction);
+					} else {
+						boolean found = false;
+						Player p = null;
+						for (Player p1 : otherPlayers) {
+							if (p1.getName().equals(playerName)){
+								found = true;
+								p = p1;
+								break;
+							}
+						}
+						if(found) {
+							screen.movePlayerOnScreen(p.getXpos(), p.getYpos(), xPos, yPos, direction);
+						} else {
+							Player newPlayer = new Player(playerName);
+							newPlayer.setDirection(direction);
+							newPlayer.setXpos(xPos);
+							newPlayer.setYpos(yPos);
+						}
+					}
+							
 				}
-					break;
+				
+				
+				
+				
+//				System.out.println(responseLine);
+//				if (responseLine.equals("her er dit navn")) {
+//					player = new Player(responseLine.substring(10));
+//				} else if (responseLine.equals("position, playername")) {
+//					//game.Screen screen = new game.Screen();
+//					
+//				}
+//					break;
 			}
 			closed = true;
 		} catch (IOException e) {
 			System.err.println("IOException:  " + e);
+		}
+	}
+	
+	public void movePlayer(String direction){
+		try{
+			output.writeBytes(player.getName() + "," + direction );
+		}catch(IOException e){
+			e.printStackTrace();
 		}
 	}
 }

@@ -13,13 +13,53 @@ public class Screen  extends JFrame {
 	
 	
 	
-	private String[][] level;
+	private String[][] level= {
+			{ "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w",
+				"w", "w", "w", "w", "w", "w", "w", "w" },
+		{ "w", "e", "e", "e", "e", "e", "e", "e", "e", "w", "w", "e", "e",
+				"e", "e", "e", "e", "e", "e", "w" },
+		{ "w", "e", "w", "e", "e", "w", "e", "e", "w", "w", "w", "e", "w",
+				"e", "e", "w", "e", "e", "w", "w" },
+		{ "w", "e", "w", "e", "e", "w", "e", "e", "e", "w", "w", "e", "w",
+				"e", "e", "w", "e", "e", "w", "w" },
+		{ "w", "e", "e", "w", "e", "e", "e", "e", "e", "e", "e", "e", "e",
+				"e", "e", "e", "e", "e", "e", "w" },
+		{ "w", "e", "w", "e", "w", "e", "w", "e", "w", "e", "w", "e", "w",
+				"e", "e", "w", "e", "e", "w", "w" },
+		{ "w", "e", "w", "e", "e", "e", "e", "e", "w", "w", "w", "e", "w",
+				"e", "e", "w", "e", "e", "w", "w" },
+		{ "w", "e", "w", "e", "e", "e", "e", "e", "w", "e", "w", "e", "w",
+				"e", "e", "w", "e", "e", "w", "w" },
+		{ "w", "e", "e", "e", "w", "e", "w", "e", "e", "w", "e", "e", "w",
+				"e", "e", "w", "e", "e", "e", "w" },
+		{ "w", "e", "e", "e", "e", "e", "w", "e", "e", "w", "e", "e", "w",
+				"e", "e", "w", "e", "e", "e", "w" },
+		{ "w", "e", "w", "w", "e", "w", "w", "e", "e", "e", "e", "e", "e",
+				"e", "e", "w", "e", "e", "w", "w" },
+		{ "w", "e", "e", "w", "e", "w", "e", "e", "e", "e", "w", "e", "e",
+				"e", "e", "w", "e", "e", "w", "w" },
+		{ "w", "e", "e", "e", "e", "e", "e", "e", "e", "w", "w", "e", "w",
+				"e", "e", "w", "e", "e", "w", "w" },
+		{ "w", "e", "e", "e", "e", "e", "e", "e", "e", "e", "w", "e", "w",
+				"e", "e", "w", "e", "e", "w", "w" },
+		{ "w", "e", "e", "e", "e", "e", "e", "e", "e", "w", "e", "e", "e",
+				"e", "e", "w", "e", "e", "w", "w" },
+		{ "w", "e", "e", "w", "e", "e", "e", "e", "e", "e", "e", "e", "e",
+				"e", "e", "e", "e", "e", "w", "w" },
+		{ "w", "e", "e", "w", "e", "w", "w", "w", "e", "e", "w", "e", "w",
+				"e", "e", "w", "w", "e", "w", "w" },
+		{ "w", "e", "w", "e", "e", "e", "e", "e", "e", "w", "w", "e", "w",
+				"e", "e", "e", "e", "e", "w", "w" },
+		{ "w", "e", "e", "e", "w", "e", "e", "e", "w", "w", "e", "e", "w",
+				"e", "e", "e", "e", "e", "e", "w" },
+		{ "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w",
+				"w", "w", "w", "w", "w", "w", "w", "w" }, };
+
 
 	
-	public Screen(String[][] level,int posX,int posY)
+	public Screen()
 	{
 		super("TKgame v. 1.0");
-		this.level = level;
 	
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setLocation(100, 100);
@@ -27,7 +67,7 @@ public class Screen  extends JFrame {
 		this.setResizable(true);
 		this.setVisible(true);
 		this.setLayout(new GridLayout(20, 20, 0, 0));
-		draw(posX,posY);
+		draw();
 		this.setAlwaysOnTop(true);
 	}
 	public void movePlayerOnScreen(int oldX, int oldY, int x, int y,String playerDirection) {
@@ -52,7 +92,7 @@ public class Screen  extends JFrame {
 		};
 
 }
-	public void draw(int posX,int posY) {
+	public void draw() {
 		for (int j = 0; j < 20; j++) {
 			for (int i = 0; i < 20; i++) {
 				if (level[i][j].equalsIgnoreCase("w")) {
@@ -70,7 +110,7 @@ public class Screen  extends JFrame {
 			}
 
 		}
-		labels[posX][posY].setIcon(
-				new ImageIcon("./Image/HeltOp.png"));
+	//	labels[posX][posY].setIcon(
+			//	new ImageIcon("./Image/HeltOp.png"));
 	}
 }
