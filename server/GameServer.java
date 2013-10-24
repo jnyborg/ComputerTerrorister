@@ -15,7 +15,7 @@ public class GameServer {
 	
 	public static void main(String[] args) {
 		// Default port number
-		int portNumber = 90210;
+		int portNumber = 3000;
 		// if you want to make your own portNumber
 		if (args.length < 1) {
 		      System.out
