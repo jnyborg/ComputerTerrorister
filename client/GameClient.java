@@ -2,6 +2,7 @@ package client;
 
 import game.KeyClass;
 import game.Player;
+import game.ScoreList;
 import game.Screen;
 
 import java.io.BufferedReader;
@@ -12,7 +13,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-public class GameClient implements Runnable {
+public class GameClient {
 	private static DataOutputStream output;
 	//input from server
 	private static BufferedReader input;
@@ -22,15 +23,20 @@ public class GameClient implements Runnable {
 	//input from user
 	private static BufferedReader inputLine;
 	private static boolean closed;
-	private KeyClass keyClass;
-	private Player player;
-	private ArrayList<Player> otherPlayers = new ArrayList<Player>();
-	private Screen screen = new Screen();
+	private static KeyClass keyClass;
+	private static Player player;
+	private static ArrayList<Player> otherPlayers = new ArrayList<Player>();
+	private static Screen screen;
+	private static ScoreList scoreList;
 
 	public static void main(String[] args) {
+		
+		
+		
+		
 		//default host and port
 		host = "localhost";
-		port = 3000;	
+		port = 2222;	
 
 		/*
 		 * Check the args length, so the user can input host + port by the console
@@ -63,11 +69,50 @@ public class GameClient implements Runnable {
 
 			try {
 
-				new Thread(new GameClient()).start();
-				while(!closed) {
+//				new Thread(new GameClient()).start();
+				String responseLine;
+				String playerName = null;
 				
-				}
+					while ((responseLine = input.readLine()) != null) {
+						if(responseLine.startsWith("p:")){
+							String[] info = responseLine.split(",");
+							String inputPlayerName = info[0].substring(3);
+							int xPos = Integer.parseInt(info[1]);
+							int yPos = Integer.parseInt(info[2]);
+							String direction = info[3];
+							
+							if(playerName == player.getName()){
+								screen.movePlayerOnScreen(player.getXpos(), player.getYpos(), xPos, yPos, direction);
+							} else {
+								boolean found = false;
+								Player p = null;
+								for (Player p1 : otherPlayers) {
+									if (p1.getName().equals(playerName)){
+										found = true;
+										p = p1;
+										break;
+									}
+								}
+								if(found) {
+									screen.movePlayerOnScreen(p.getXpos(), p.getYpos(), xPos, yPos, direction);
+								} else {
+									Player newPlayer = new Player(playerName);
+									newPlayer.setDirection(direction);
+									newPlayer.setXpos(xPos);
+									newPlayer.setYpos(yPos);
+								}
+							}
+									
+						} else if (responseLine.substring(0,6).equals("Please")) {
+							System.out.println(responseLine);
+							playerName = inputLine.readLine();
+							output.writeBytes(playerName+"\n");
+							System.out.println(responseLine);
+							init();
+							
+						} 
 
+					}
 
 				//close connection
 				clientSocket.close();
@@ -81,64 +126,19 @@ public class GameClient implements Runnable {
 
 	}
 
-	public void run() {
-		String responseLine;
-		try {
-			while ((responseLine = input.readLine()) != null) {
-				
-				if(responseLine.startsWith("p:")){
-					String[] info = responseLine.split(",");
-					String playerName = info[0].substring(3);
-					int xPos = Integer.parseInt(info[1]);
-					int yPos = Integer.parseInt(info[2]);
-					String direction = info[3];
-					
-					if(playerName == player.getName()){
-						screen.movePlayerOnScreen(player.getXpos(), player.getYpos(), xPos, yPos, direction);
-					} else {
-						boolean found = false;
-						Player p = null;
-						for (Player p1 : otherPlayers) {
-							if (p1.getName().equals(playerName)){
-								found = true;
-								p = p1;
-								break;
-							}
-						}
-						if(found) {
-							screen.movePlayerOnScreen(p.getXpos(), p.getYpos(), xPos, yPos, direction);
-						} else {
-							Player newPlayer = new Player(playerName);
-							newPlayer.setDirection(direction);
-							newPlayer.setXpos(xPos);
-							newPlayer.setYpos(yPos);
-						}
-					}
-							
-				}
-				
-				
-				
-				
-//				System.out.println(responseLine);
-//				if (responseLine.equals("her er dit navn")) {
-//					player = new Player(responseLine.substring(10));
-//				} else if (responseLine.equals("position, playername")) {
-//					//game.Screen screen = new game.Screen();
-//					
-//				}
-//					break;
-
-			}
-			
-		} catch (IOException e) {
-			System.err.println("IOException:  " + e);
-		}
+	public static void init() {
+		screen = new Screen();
+		otherPlayers = new ArrayList<Player>();
+		scoreList = new ScoreList(otherPlayers);
+		scoreList.addPlayer(player);
+		scoreList.setVisible(true);
+		
+		
 	}
 	
 	public void movePlayer(String direction){
 		try{
-			output.writeBytes(player.getName() + "," + direction );
+			output.writeBytes(player.getName() + "," + direction + "\n");
 		}catch(IOException e){
 			e.printStackTrace();
 		}
