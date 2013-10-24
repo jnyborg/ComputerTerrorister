@@ -58,7 +58,7 @@ public class GameClient implements Runnable {
 
 				new Thread(new GameClient()).start();
 				while(!closed) {
-
+					// listen to key changed and rewrite to string
 					System.out.println("di puta de madonna");
 				}
 
@@ -84,12 +84,13 @@ public class GameClient implements Runnable {
 					String playerName = responseLine.substring(10);
 					game.Player player = new game.Player(playerName);
 				} else if (responseLine.equals("position, playername")) {
-					game.Screen screen = new game.Screen();
+					game.Screen screen = new game.Screen(null, 0, 0);
+					screen.movePlayerOnScreen(oldX, oldY, x, y, playerDirection);
 					
-				}
-					break;
+				} 
+					
 			}
-			closed = true;
+			
 		} catch (IOException e) {
 			System.err.println("IOException:  " + e);
 		}
