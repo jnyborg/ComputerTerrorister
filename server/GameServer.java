@@ -15,7 +15,7 @@ public class GameServer {
 	
 	public static void main(String[] args) {
 		// Default port number
-		int portNumber = 3000;
+		int portNumber = 2222;
 		// if you want to make your own portNumber
 		if (args.length < 1) {
 		      System.out
@@ -35,6 +35,7 @@ public class GameServer {
 		while (true) {
 		      try {
 		        connection = serverSocket.accept();
+		        System.out.println("accept");
 		        int i = 0;
 		        for (i = 0; i < maxClientsCount; i++) {
 		          if (threads[i] == null) {

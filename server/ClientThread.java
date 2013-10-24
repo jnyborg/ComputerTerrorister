@@ -36,15 +36,16 @@ public class ClientThread extends Thread {
 				output = new DataOutputStream(connection.getOutputStream());				
 				boolean nameOk = false;
 				while (!nameOk) {
-					output.writeBytes("Enter your name: ");
+					output.writeBytes("Please enter your name: \n");
 					String nameToCheck = input.readLine().trim();
 					if (!checkPlayerName(nameToCheck)) {
+						System.out.println("name is ok");
 						playerName = nameToCheck;
-						output.writeBytes("Welcome " + playerName + "to the game.");
+						output.writeBytes("Welcome " + playerName + "to the game.\n");
 						nameOk = true;
 						gameHandler.addPlayer(playerName);
 					} else {
-						output.writeBytes(nameToCheck + " is already taken! Please try again.");
+						output.writeBytes(nameToCheck + " is already taken! Please try again.\n");
 					}
 				}
 				
@@ -53,7 +54,7 @@ public class ClientThread extends Thread {
 					String[] moves = playerMove.split(",");
 					String pos = gameHandler.playerMoved(playerName, moves[1]); //TODO: Måske moves[3]
 					for (int i = 0; i < maxClientsCount; i++) {
-						threads[i].output.writeBytes(pos);
+						threads[i].output.writeBytes(pos+"\n");
 					}
 				}
 								
@@ -79,6 +80,7 @@ public class ClientThread extends Thread {
 		}
 		
 		public boolean checkPlayerName(String playerName) {
+			System.out.println("chek nam");
 			boolean nameFound = false;	
 			for (int i = 0; i < maxClientsCount; i++) {
 				if (threads[i] != null && threads[i] != this ) {
