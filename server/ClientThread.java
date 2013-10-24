@@ -13,12 +13,14 @@ public class ClientThread extends Thread {
 		private Socket connection;
 		private int maxClientsCount;
 		private final ClientThread[] threads;
-		private String playerName;		
+		private String playerName;	
+		private GameHandler gameHandler;
 
 		public ClientThread(Socket connection, ClientThread[] threads) {
 			this.connection = connection;
 			this.threads = threads;
 			maxClientsCount = threads.length;
+			gameHandler = new GameHandler();
 		}
 		
 		public void run(){
@@ -40,8 +42,18 @@ public class ClientThread extends Thread {
 						playerName = nameToCheck;
 						output.writeBytes("Welcome " + playerName + "to the game.");
 						nameOk = true;
+						gameHandler.addPlayer(playerName);
 					} else {
 						output.writeBytes(nameToCheck + " is already taken! Please try again.");
+					}
+				}
+				
+				while(input.readLine() != null) {
+					String playerMove = input.readLine();
+					String[] moves = playerMove.split(",");
+					String pos = gameHandler.playerMoved(playerName, moves[1]); //TODO: Måske moves[3]
+					for (int i = 0; i < maxClientsCount; i++) {
+						threads[i].output.writeBytes(pos);
 					}
 				}
 								

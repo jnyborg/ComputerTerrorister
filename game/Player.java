@@ -35,38 +35,40 @@ public int getPoint() {
 	return point;
 }
 
-public int getXpos() {
-	return xpos;
-}
+	public int getXpos() {
+		return xpos;
+	}
 
-public void setXpos(int xpos) {
-	this.xpos = xpos;
-}
+	public void setXpos(int xpos) {
+		this.xpos = xpos;
+	}
 
-public int getYpos() {
-	return ypos;
-}
+	public int getYpos() {
+		return ypos;
+	}
 
-public void setYpos(int ypos) {
-	this.ypos = ypos;
-}
-public String getDirection() {
-	return direction;
-}
+	public void setYpos(int ypos) {
+		this.ypos = ypos;
+	}
 
-public void setDirection(String direction) {
-	this.direction = direction;
-}
+	public String getDirection() {
+		return direction;
+	}
 
-String ToString () {
-	return name + "   " + point;
-}
-void addOnePoint() {
-	
-	point ++;
-}
+	public void setDirection(String direction) {
+		this.direction = direction;
+	}
 
-void subOnePoint() {
-	point --;
-}
+	public String ToString() {
+		return name + "   " + point;
+	}
+
+	public void addOnePoint() {
+
+		point++;
+	}
+
+	public void subOnePoint() {
+		point--;
+	}
 }

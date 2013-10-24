@@ -65,7 +65,7 @@ public class GameClient implements Runnable {
 
 				new Thread(new GameClient()).start();
 				while(!closed) {
-					
+				
 				}
 
 
@@ -128,8 +128,9 @@ public class GameClient implements Runnable {
 //					
 //				}
 //					break;
+
 			}
-			closed = true;
+			
 		} catch (IOException e) {
 			System.err.println("IOException:  " + e);
 		}
