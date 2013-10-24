@@ -14,7 +14,9 @@ public class game {
 	public static Player me;
 	
 	public static void main(String[] args) throws Exception {
-	
+		
+		client.GameClient gameClient = new client.GameClient();
+		
 		System.out.println("Indtast dit spillernavn");
 		BufferedReader b = new BufferedReader (new InputStreamReader(System.in));
 		String in = b.readLine();
@@ -27,6 +29,7 @@ public class game {
 		ScoreList s = new ScoreList(players);
 		s.setVisible(true);
 		gameplayer g = new gameplayer(me,s,players);
+		
 	}
 
 }
