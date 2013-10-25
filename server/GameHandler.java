@@ -6,6 +6,9 @@ import game.ScoreList;
 import java.util.ArrayList;
 import java.util.List;
 
+/*
+ * Handles the player movements
+ */
 public class GameHandler {
 	//SingleTon
 	private static GameHandler instance = null;
@@ -61,6 +64,9 @@ public class GameHandler {
 			"w", "w", "w", "w", "w", "w", "w", "w" }, };
 
 	
+	/*
+	 * Constructor to initialize the list of players
+	 */
 	public GameHandler() {
 		players = new ArrayList<Player>();
 	}
@@ -95,11 +101,11 @@ public class GameHandler {
 		};
 		if (level[x][y].equals("w")) {
 			me.subOnePoint();
-//			scoreList.updateScoreOnScreenAll();
+//			scoreList.updateScoreOnScreenAll(); //TODO: Implement
 		} 
 		else {
 			me.addOnePoint();
-//			scoreList.updateScoreOnScreenAll();
+//			scoreList.updateScoreOnScreenAll(); //TODO: Implement
 			me.setXpos(x);
 			me.setYpos(y);
 			pos = "p:" + oldX + "#" + oldY + "#" + x + "#" + y + "#" + direction;
@@ -110,7 +116,7 @@ public class GameHandler {
 	public List<Player> getPlayers() {
 		return players;
 	}
-
+	
 	public void setPlayers(List<Player> players) {
 		this.players = players;
 	}
@@ -123,6 +129,11 @@ public class GameHandler {
 		this.scoreList = scoreList;
 	}
 	
+	/**
+	 * Adds a player to the game. 
+	 * Player(s) will always start at the same position X,Y(5,7) - and facing the upwards direction.
+	 * @param name
+	 */
 	public void addPlayer(String name) {
 		Player player = new Player(name);	
 		player.setDirection("u");
@@ -159,7 +170,5 @@ public class GameHandler {
 		System.out.println("reusltafter " + result );
 		return result;
 	}
-	
-	
 	
 }

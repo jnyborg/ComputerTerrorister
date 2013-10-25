@@ -6,12 +6,13 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 
+
 public class ClientThread extends Thread {
 
 		private BufferedReader input = null;
 		private DataOutputStream output = null;
 		private Socket connection;
-		private int maxClientsCount;
+		private int maxClientsCount; //Maximum allowed clients in the game
 		private final ClientThread[] threads;
 		private String playerName;	
 		private GameHandler gameHandler;
@@ -78,7 +79,7 @@ public class ClientThread extends Thread {
 					}
 				}
 				
-				// Clean up - so new clients can connect to the game
+				// Clean up - so new clients can connect to the game.
 				for (int i = 0; i < maxClientsCount; i++) {
 					if (threads[i] == this) {
 						threads[i] = null;

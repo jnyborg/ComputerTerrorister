@@ -1,7 +1,6 @@
 package client;
 
 import game.KeyClass;
-import game.Player;
 import game.ScoreList;
 import game.Screen;
 
@@ -11,7 +10,6 @@ import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
 import java.net.UnknownHostException;
-import java.util.ArrayList;
 
 public class GameClient implements Runnable  {
 	private static DataOutputStream output;
@@ -24,7 +22,7 @@ public class GameClient implements Runnable  {
 	private static BufferedReader inputLine;
 	private static KeyClass keyClass;
 	private static Screen screen;
-	private static ScoreList scoreList;
+	private static ScoreList scoreList; //TODO: Implement
 	private static String playerName;
 
 	public static void main(String[] args) {
@@ -33,8 +31,8 @@ public class GameClient implements Runnable  {
 	}
 
 	public void run() {
-		host = "localhost";
-		port = 2222;
+		host = "localhost"; // The IP you connect to. For debugging purposes: localhost
+		port = 2222; // The post the socket listens to.
 		/*
 		 * Open a socket on a given host and port. Open input and output streams.
 		 */
@@ -65,6 +63,7 @@ public class GameClient implements Runnable  {
 					output.writeBytes(tempName+"\n");
 					if((responseLine = input.readLine()).startsWith("Welcome")){
 						playerName = tempName;
+						
 						//Listen to next input from server, which should be a token with player info
 						responseLine = input.readLine();
 						System.out.println("responseline: " + responseLine);
@@ -101,7 +100,9 @@ public class GameClient implements Runnable  {
 		
 		
 	}
-	
+	/*
+	 * Draws the background.
+	 */
 	public void init() {
 		screen = new Screen();
 		keyClass = new KeyClass(this);
