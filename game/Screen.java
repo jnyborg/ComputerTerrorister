@@ -92,6 +92,10 @@ public class Screen  extends JFrame {
 					new ImageIcon("./Image/HeltNed.png"));
 		};
 }
+	/**
+	 * Given a token consisting of one or more tokens x#y#direction seperated by ¤, draw players.
+	 * @param tokens
+	 */
 	public void drawPlayers(String tokens) {
 		int x,y;
 		String playerDirection;

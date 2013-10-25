@@ -13,7 +13,7 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.util.ArrayList;
 
-public class GameClient {
+public class GameClient implements Runnable  {
 	private static DataOutputStream output;
 	//input from server
 	private static BufferedReader input;
@@ -22,32 +22,19 @@ public class GameClient {
 	private static Socket clientSocket;
 	//input from user
 	private static BufferedReader inputLine;
-	private static boolean closed;
 	private static KeyClass keyClass;
 	private static Screen screen;
 	private static ScoreList scoreList;
 	private static String playerName;
 
 	public static void main(String[] args) {
-		
-		
-		
-		
-		//default host and port
+		new Thread(new GameClient()).start();
+
+	}
+
+	public void run() {
 		host = "localhost";
-		port = 2222;	
-
-		/*
-		 * Check the args length, so the user can input host + port by the console
-		 */		
-		if (args.length < 2) {
-			System.out.println("Now using host " + host + " and port number " + port);
-		} else {
-			host = args[0];
-			port = Integer.valueOf(args[1]).intValue();
-			System.out.println("Now using host " + host + " and port number " + port);
-		}
-
+		port = 2222;
 		/*
 		 * Open a socket on a given host and port. Open input and output streams.
 		 */
@@ -94,7 +81,10 @@ public class GameClient {
 					if (responseLine.startsWith("p:")) {
 						String[] playerPosition = responseLine.substring(2).split("#");
 						screen.movePlayerOnScreen(Integer.parseInt(playerPosition[0]), Integer.parseInt(playerPosition[1]), Integer.parseInt(playerPosition[2]), Integer.parseInt(playerPosition[3]), playerPosition[4]);
+					} else if (responseLine.startsWith("new:")) {
+						screen.drawPlayers(responseLine.substring(4));
 					}
+					
 				}
 			
 				//close connection
@@ -103,22 +93,19 @@ public class GameClient {
 				output.close();
 			} catch (IOException e) {
 				System.err.println("IOException:" + e);
-			} finally {
-				
-			}
+			} 
 
 		}
-
+		
+		
 	}
-
-	public static void init() {
+	
+	public void init() {
 		screen = new Screen();
-		keyClass = new KeyClass();
+		keyClass = new KeyClass(this);
 		screen.addKeyListener(keyClass);
 //		scoreList.addPlayer(player);
 //		scoreList.setVisible(true);
-		
-		
 	}
 	
 	/**
