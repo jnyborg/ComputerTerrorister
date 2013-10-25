@@ -7,7 +7,17 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class GameHandler {
+	//SingleTon
+	private static GameHandler instance = null;
+	public static GameHandler getInstance(){
+		if(instance == null){
+			instance = new GameHandler();
+		}
+		return instance;
+	}
+	
 	private List<Player> players;
+	private ScoreList scoreList;
 	private String[][] level = {
 		{ "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w",
 			"w", "w", "w", "w", "w", "w", "w", "w" },
@@ -49,11 +59,10 @@ public class GameHandler {
 			"e", "e", "e", "e", "e", "e", "w" },
 	{ "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w",
 			"w", "w", "w", "w", "w", "w", "w", "w" }, };
-	private ScoreList scoreList;
+
 	
 	public GameHandler() {
 		players = new ArrayList<Player>();
-		
 	}
 	
 	public String playerMoved(String token) {
@@ -115,11 +124,11 @@ public class GameHandler {
 	}
 	
 	public void addPlayer(String name) {
-		Player player = new Player(name);
-		players.add(player);
+		Player player = new Player(name);	
 		player.setDirection("u");
 		player.setXpos(5);
 		player.setYpos(7);
+		players.add(player);
 	}
 	/**
 	 * Returns a given player token, with format: name#x#y#direction
@@ -141,10 +150,13 @@ public class GameHandler {
 	 * @return the token
 	 */
 	public String getAllPlayerTokens(){
-		String result = "";
+		//denne printer kun en spiller ud! Add metoden overskriver spillere....
+		String result="";
 		for(Player p : players){
-			result = result + p.getName() + "#" + p.getXpos() + "#" + p.getYpos() + "#" + p.getDirection() + "¤";
+			System.out.println("her løber jeg igennem");
+			result += p.getName() + "#" + p.getXpos() + "#" + p.getYpos() + "#" + p.getDirection() + "¤";
 		}
+		System.out.println("reusltafter " + result );
 		return result;
 	}
 	

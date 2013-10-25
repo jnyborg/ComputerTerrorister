@@ -24,7 +24,7 @@ public class game {
 		players.add(me);
 		players.add(new Player("FUP"));
 		
-		ScoreList s = new ScoreList(players);
+		ScoreList s = new ScoreList();
 		s.setVisible(true);
 		gameplayer g = new gameplayer(me,s,players);
 	}

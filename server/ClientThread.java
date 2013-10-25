@@ -21,7 +21,7 @@ public class ClientThread extends Thread {
 			this.connection = connection;
 			this.threads = threads;
 			maxClientsCount = threads.length;
-			gameHandler = new GameHandler();
+			gameHandler = GameHandler.getInstance();
 			clientThread = this;
 		}
 		
@@ -48,7 +48,7 @@ public class ClientThread extends Thread {
 						
 						for (int i = 0; i < maxClientsCount; i++) {
 							if(threads[i] == clientThread){
-								System.out.println(gameHandler.getAllPlayerTokens());
+//								System.out.println("Get all tokens" + gameHandler.getAllPlayerTokens());
 								output.writeBytes(gameHandler.getAllPlayerTokens() + "\n");
 							}else if(threads[i] != null){
 								threads[i].output.writeBytes("new:" + gameHandler.getPlayerToken(playerName)+ "\n");

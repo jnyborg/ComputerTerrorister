@@ -67,6 +67,7 @@ public class GameClient implements Runnable  {
 						playerName = tempName;
 						//Listen to next input from server, which should be a token with player info
 						responseLine = input.readLine();
+						System.out.println("responseline: " + responseLine);
 						init();
 						screen.drawPlayers(responseLine);	
 						System.out.println(responseLine);
@@ -83,6 +84,7 @@ public class GameClient implements Runnable  {
 						screen.movePlayerOnScreen(Integer.parseInt(playerPosition[0]), Integer.parseInt(playerPosition[1]), Integer.parseInt(playerPosition[2]), Integer.parseInt(playerPosition[3]), playerPosition[4]);
 					} else if (responseLine.startsWith("new:")) {
 						screen.drawPlayers(responseLine.substring(4));
+//						scoreList.addPlayer(responseLine);
 					}
 					
 				}
@@ -104,6 +106,7 @@ public class GameClient implements Runnable  {
 		screen = new Screen();
 		keyClass = new KeyClass(this);
 		screen.addKeyListener(keyClass);
+		scoreList = new ScoreList();
 //		scoreList.addPlayer(player);
 //		scoreList.setVisible(true);
 	}
