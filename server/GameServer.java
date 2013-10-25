@@ -43,6 +43,7 @@ public class GameServer {
 		            break;
 		          }
 		        }
+		        // If the server is full. Max connections is 10.
 		        if (i == maxClientsCount) {
 		        	DataOutputStream out = new DataOutputStream(connection.getOutputStream());
 		        	out.writeBytes("Too many people on the server, please try again later \n");
