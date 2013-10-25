@@ -56,39 +56,44 @@ public class GameHandler {
 		
 	}
 	
-	public String playerMoved(String playerName, String direction) {
+	public String playerMoved(String token) {
+		String[] tokens = token.split("#");
+		String playerName = tokens[0];
+		String direction = tokens[1];
 		Player me = null;
-		String pos = "";
+		String pos = "You cannot move";
 		for (Player p : players) {
 			if (p.getName().equals(playerName)) {
 				me = p;
 				break;
 			}
 		}
-		me.setDirection(direction);
+		me.setDirection(tokens[1]);
 		int x = me.getXpos(),y = me.getYpos();
-		if (direction.equals("right")) {
+		int oldX = x,oldY = y;
+		
+		if (direction.equals("r")) {
 			x = me.getXpos() + 1;
 		};
-		if (direction.equals("left")) {
+		if (direction.equals("l")) {
 			x = me.getXpos() - 1;
 		};
-		if (direction.equals("up")) {
+		if (direction.equals("u")) {
 			y = me.getYpos() - 1;
 		};
-		if (direction.equals("down")) {
+		if (direction.equals("d")) {
 			y = me.getYpos() + 1;
 		};
 		if (level[x][y].equals("w")) {
 			me.subOnePoint();
-			scoreList.updateScoreOnScreenAll();
+//			scoreList.updateScoreOnScreenAll();
 		} 
 		else {
 			me.addOnePoint();
-			scoreList.updateScoreOnScreenAll();
+//			scoreList.updateScoreOnScreenAll();
 			me.setXpos(x);
 			me.setYpos(y);
-			pos = "p:"+ playerName + "," + x +"," + y + "," + me.getDirection();
+			pos = "p:" + oldX + "#" + oldY + "#" + x + "#" + y + "#" + direction;
 		}
 		return pos;
 	}
@@ -112,9 +117,35 @@ public class GameHandler {
 	public void addPlayer(String name) {
 		Player player = new Player(name);
 		players.add(player);
-		player.setDirection("left");
+		player.setDirection("u");
 		player.setXpos(5);
 		player.setYpos(7);
+	}
+	/**
+	 * Returns a given player token, with format: name#x#y#direction
+	 * @param name
+	 * @return
+	 */
+	public String getPlayerToken(String name){
+		String result = "";
+		for(Player p : players){
+			if(p.getName().equals(name)){
+				result = p.getName() + "#" + p.getXpos() + "#" + p.getYpos() + "#" + p.getDirection();
+			}
+		}
+		return result;
+	}
+	
+	/**
+	 * Returns a token with format: name#x#y#direction for all players seperated by ¤
+	 * @return the token
+	 */
+	public String getAllPlayerTokens(){
+		String result = "";
+		for(Player p : players){
+			result = result + p.getName() + "#" + p.getXpos() + "#" + p.getYpos() + "#" + p.getDirection() + "¤";
+		}
+		return result;
 	}
 	
 	

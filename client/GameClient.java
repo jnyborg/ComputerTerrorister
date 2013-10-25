@@ -24,10 +24,9 @@ public class GameClient {
 	private static BufferedReader inputLine;
 	private static boolean closed;
 	private static KeyClass keyClass;
-	private static Player player;
-	private static ArrayList<Player> otherPlayers = new ArrayList<Player>();
 	private static Screen screen;
 	private static ScoreList scoreList;
+	private static String playerName;
 
 	public static void main(String[] args) {
 		
@@ -63,63 +62,49 @@ public class GameClient {
 			System.err.println("Couldn't get I/O for the connection to the host "
 					+ host);
 		}
-
+		/*
+		 * If everything is setup correct
+		 */
 		if (clientSocket != null && input != null && output != null) {
-
-
 			try {
-
-//				new Thread(new GameClient()).start();
+				/*
+				 * Setup. Check name with server, and draw players on screen.
+				 */
 				String responseLine;
-				String playerName = null;
-				
-					while ((responseLine = input.readLine()) != null) {
-						if(responseLine.startsWith("p:")){
-							String[] info = responseLine.split(",");
-							String inputPlayerName = info[0].substring(3);
-							int xPos = Integer.parseInt(info[1]);
-							int yPos = Integer.parseInt(info[2]);
-							String direction = info[3];
-							
-							if(playerName == player.getName()){
-								screen.movePlayerOnScreen(player.getXpos(), player.getYpos(), xPos, yPos, direction);
-							} else {
-								boolean found = false;
-								Player p = null;
-								for (Player p1 : otherPlayers) {
-									if (p1.getName().equals(playerName)){
-										found = true;
-										p = p1;
-										break;
-									}
-								}
-								if(found) {
-									screen.movePlayerOnScreen(p.getXpos(), p.getYpos(), xPos, yPos, direction);
-								} else {
-									Player newPlayer = new Player(playerName);
-									newPlayer.setDirection(direction);
-									newPlayer.setXpos(xPos);
-									newPlayer.setYpos(yPos);
-								}
-							}
-									
-						} else if (responseLine.substring(0,6).equals("Please")) {
-							System.out.println(responseLine);
-							playerName = inputLine.readLine();
-							output.writeBytes(playerName+"\n");
-							System.out.println(responseLine);
-							init();
-							
-						} 
-
+				boolean nameOk = false;		
+				while(!nameOk){
+					System.out.println(responseLine = input.readLine());
+					String tempName = inputLine.readLine();
+					output.writeBytes(tempName+"\n");
+					if((responseLine = input.readLine()).startsWith("Welcome")){
+						playerName = tempName;
+						//Listen to next input from server, which should be a token with player info
+						responseLine = input.readLine();
+						init();
+						screen.drawPlayers(responseLine);	
+						System.out.println(responseLine);
+						nameOk = true;
 					}
-
+				}
+				
+				/*
+				 * Listen to playermoves from server, and draw them.
+				 */
+				while ((responseLine = input.readLine()) != null) {
+					if (responseLine.startsWith("p:")) {
+						String[] playerPosition = responseLine.substring(2).split("#");
+						screen.movePlayerOnScreen(Integer.parseInt(playerPosition[0]), Integer.parseInt(playerPosition[1]), Integer.parseInt(playerPosition[2]), Integer.parseInt(playerPosition[3]), playerPosition[4]);
+					}
+				}
+			
 				//close connection
 				clientSocket.close();
 				input.close();
 				output.close();
 			} catch (IOException e) {
 				System.err.println("IOException:" + e);
+			} finally {
+				
 			}
 
 		}
@@ -128,19 +113,23 @@ public class GameClient {
 
 	public static void init() {
 		screen = new Screen();
-		otherPlayers = new ArrayList<Player>();
-		scoreList = new ScoreList(otherPlayers);
-		scoreList.addPlayer(player);
-		scoreList.setVisible(true);
+		keyClass = new KeyClass();
+		screen.addKeyListener(keyClass);
+//		scoreList.addPlayer(player);
+//		scoreList.setVisible(true);
 		
 		
 	}
 	
-	public void movePlayer(String direction){
+	/**
+	 * This method is called by pressing the arrow keys. When pressed, write to server the 
+	 * @param direction
+	 */
+	public static void movePlayer(String direction){
 		try{
-			output.writeBytes(player.getName() + "," + direction + "\n");
+			output.writeBytes("move:"+playerName + "#" + direction + "\n");
 		}catch(IOException e){
-			e.printStackTrace();
+			System.err.println(e);
 		}
 	}
 }

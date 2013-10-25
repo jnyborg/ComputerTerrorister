@@ -12,7 +12,7 @@ public Player (String name) {
 	xpos = 5;
 	ypos = 7;
 	point = 0;
-	direction = "up";
+	direction = "u";
 }
 
 

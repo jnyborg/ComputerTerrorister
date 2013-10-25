@@ -7,23 +7,20 @@ import client.GameClient;
 public class KeyClass implements KeyListener {
 	private GameClient g;
 	
-	public KeyClass(GameClient g){
-		this.g = g;
-	}
-
 		public void keyPressed(KeyEvent ke) {
 			if (ke.getKeyCode() == ke.VK_UP) {
-				g.movePlayer("up");
+				GameClient.movePlayer("u");
+				System.out.println("move up");
 			}
 
 			if (ke.getKeyCode() == ke.VK_DOWN) {
-				g.movePlayer("down");
+				GameClient.movePlayer("d");
 			}
 			if (ke.getKeyCode() == ke.VK_LEFT) {
-				g.movePlayer("left");
+				GameClient.movePlayer("l");
 			}
 			if (ke.getKeyCode() == ke.VK_RIGHT) {
-				g.movePlayer("right");
+				GameClient.movePlayer("r");
 			}
 	}
 
