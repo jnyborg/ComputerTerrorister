@@ -67,23 +67,33 @@ public class GameClient implements Runnable  {
 						//Listen to next input from server, which should be a token with player info
 						responseLine = input.readLine();
 						System.out.println("responseline: " + responseLine);
-						init();
-						screen.drawPlayers(responseLine);	
-						System.out.println(responseLine);
+						init(responseLine);
 						nameOk = true;
 					}
 				}
 				
 				/*
-				 * Listen to playermoves from server, and draw them.
+				 * Listen to responses from server, and take appropriate action
 				 */
 				while ((responseLine = input.readLine()) != null) {
+					//Player changed position
 					if (responseLine.startsWith("p:")) {
-						String[] playerPosition = responseLine.substring(2).split("#");
-						screen.movePlayerOnScreen(Integer.parseInt(playerPosition[0]), Integer.parseInt(playerPosition[1]), Integer.parseInt(playerPosition[2]), Integer.parseInt(playerPosition[3]), playerPosition[4]);
-					} else if (responseLine.startsWith("new:")) {
-						screen.drawPlayers(responseLine.substring(4));
-//						scoreList.addPlayer(responseLine);
+						String[] playerData = responseLine.substring(2).split("#");
+						screen.movePlayerOnScreen(Integer.parseInt(playerData[1]), Integer.parseInt(playerData[2]), Integer.parseInt(playerData[3]), Integer.parseInt(playerData[4]), playerData[5]);
+						scoreList.updateScore(playerData[0], playerData[6]);
+					}
+					//New player joined
+					else if (responseLine.startsWith("new:")) {
+						String[] playerData = responseLine.substring(4).split("#");
+						screen.drawPlayer(Integer.parseInt(playerData[1]), Integer.parseInt(playerData[2]), playerData[3]);
+						scoreList.addPlayer(playerData[0], playerData[4]);
+						
+						
+					}
+					//Player moved into wall and lost a point
+					else if (responseLine.startsWith("w:")) {
+						String[] playerData = responseLine.substring(2).split("#");
+						scoreList.updateScore(playerData[0], playerData[1]);
 					}
 					
 				}
@@ -103,13 +113,18 @@ public class GameClient implements Runnable  {
 	/*
 	 * Draws the background.
 	 */
-	public void init() {
+	public void init(String responseLine) {
 		screen = new Screen();
 		keyClass = new KeyClass(this);
 		screen.addKeyListener(keyClass);
 		scoreList = new ScoreList();
-//		scoreList.addPlayer(player);
-//		scoreList.setVisible(true);
+		scoreList.setVisible(true);
+		String[] playerDatas = responseLine.split("¤");
+		for (String s : playerDatas) {
+			String[] playerData = s.split("#");
+			screen.drawPlayer(Integer.parseInt(playerData[1]), Integer.parseInt(playerData[2]), playerData[3]);
+			scoreList.addPlayer(playerData[0], playerData[4]);
+		}
 	}
 	
 	/**

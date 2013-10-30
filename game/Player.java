@@ -1,39 +1,35 @@
 package game;
 
 public class Player {
-String name;
-int xpos;
-int ypos;
-int point;
-String direction;
+	String name;
+	int xpos;
+	int ypos;
+	int point;
+	String direction;
 
-public Player (String name) {
-	this.name = name;
-	xpos = 5;
-	ypos = 7;
-	point = 0;
-	direction = "u";
-}
+	public Player(String name) {
+		this.name = name;
+		xpos = 5;
+		ypos = 7;
+		point = 0;
+		direction = "u";
+	}
 
+	public String getName() {
+		return name;
+	}
 
-public String getName() {
-	return name;
-}
+	public void setName(String name) {
+		this.name = name;
+	}
 
+	public void setPoint(int point) {
+		this.point = point;
+	}
 
-public void setName(String name) {
-	this.name = name;
-}
-
-
-public void setPoint(int point) {
-	this.point = point;
-}
-
-
-public int getPoint() {
-	return point;
-}
+	public int getPoint() {
+		return point;
+	}
 
 	public int getXpos() {
 		return xpos;
@@ -64,7 +60,6 @@ public int getPoint() {
 	}
 
 	public void addOnePoint() {
-
 		point++;
 	}
 

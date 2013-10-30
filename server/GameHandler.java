@@ -5,6 +5,7 @@ import game.ScoreList;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 /*
  * Handles the player movements
@@ -62,53 +63,63 @@ public class GameHandler {
 			"e", "e", "e", "e", "e", "e", "w" },
 	{ "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w",
 			"w", "w", "w", "w", "w", "w", "w", "w" }, };
-
+	private ArrayList<String> spawns = new ArrayList<String>();
 	
 	/*
 	 * Constructor to initialize the list of players
 	 */
 	public GameHandler() {
-		players = new ArrayList<Player>();
+		players = new ArrayList<Player>();		
+		calculateSpawns();
+	}
+	public void calculateSpawns() { 
+		for (int x = 0; x < level.length; x++) {
+			for (int y = 0; y < level.length; y++) {
+				if (level[x][y].equals("e")) {
+					spawns.add(x +"," + y);
+				}
+			}
+		}
 	}
 	
 	public String playerMoved(String token) {
 		String[] tokens = token.split("#");
 		String playerName = tokens[0];
 		String direction = tokens[1];
-		Player me = null;
-		String pos = "You cannot move";
+		Player player = null;
+		String pos;
 		for (Player p : players) {
 			if (p.getName().equals(playerName)) {
-				me = p;
+				player = p;
 				break;
 			}
 		}
-		me.setDirection(tokens[1]);
-		int x = me.getXpos(),y = me.getYpos();
+		player.setDirection(tokens[1]);
+		int x = player.getXpos(),y = player.getYpos();
 		int oldX = x,oldY = y;
 		
 		if (direction.equals("r")) {
-			x = me.getXpos() + 1;
+			x = player.getXpos() + 1;
 		};
 		if (direction.equals("l")) {
-			x = me.getXpos() - 1;
+			x = player.getXpos() - 1;
 		};
 		if (direction.equals("u")) {
-			y = me.getYpos() - 1;
+			y = player.getYpos() - 1;
 		};
 		if (direction.equals("d")) {
-			y = me.getYpos() + 1;
+			y = player.getYpos() + 1;
 		};
 		if (level[x][y].equals("w")) {
-			me.subOnePoint();
-//			scoreList.updateScoreOnScreenAll(); //TODO: Implement
+			player.subOnePoint();
+			pos = "w:" + player.getName() + "#" + player.getPoint();
 		} 
 		else {
-			me.addOnePoint();
+			player.addOnePoint();
 //			scoreList.updateScoreOnScreenAll(); //TODO: Implement
-			me.setXpos(x);
-			me.setYpos(y);
-			pos = "p:" + oldX + "#" + oldY + "#" + x + "#" + y + "#" + direction;
+			player.setXpos(x);
+			player.setYpos(y);
+			pos = "p:" + player.getName() + "#" + oldX + "#" + oldY + "#" + x + "#" + y + "#" + direction + "#" + player.getPoint();
 		}
 		return pos;
 	}
@@ -137,8 +148,10 @@ public class GameHandler {
 	public void addPlayer(String name) {
 		Player player = new Player(name);	
 		player.setDirection("u");
-		player.setXpos(5);
-		player.setYpos(7);
+		String spawn = getSpawn();
+		String[] position = spawn.split(",");
+		player.setXpos(Integer.parseInt(position[0]));
+		player.setYpos(Integer.parseInt(position[1]));
 		players.add(player);
 	}
 	/**
@@ -150,7 +163,7 @@ public class GameHandler {
 		String result = "";
 		for(Player p : players){
 			if(p.getName().equals(name)){
-				result = p.getName() + "#" + p.getXpos() + "#" + p.getYpos() + "#" + p.getDirection();
+				result = p.getName() + "#" + p.getXpos() + "#" + p.getYpos() + "#" + p.getDirection() + "#" + p.getPoint(); 
 			}
 		}
 		return result;
@@ -164,11 +177,15 @@ public class GameHandler {
 		//denne printer kun en spiller ud! Add metoden overskriver spillere....
 		String result="";
 		for(Player p : players){
-			System.out.println("her løber jeg igennem");
-			result += p.getName() + "#" + p.getXpos() + "#" + p.getYpos() + "#" + p.getDirection() + "¤";
+			result += p.getName() + "#" + p.getXpos() + "#" + p.getYpos() + "#" + p.getDirection() + "#" + p.getPoint() + "¤";
 		}
 		System.out.println("reusltafter " + result );
 		return result;
+	}
+	
+	public String getSpawn() {		
+		Random random = new Random();	
+		return spawns.get(random.nextInt(spawns.size()-1));		
 	}
 	
 }

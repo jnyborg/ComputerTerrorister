@@ -1,23 +1,16 @@
 package game;
 
-import java.awt.BorderLayout;
-import java.awt.Container;
 import java.awt.GridLayout;
-import java.util.ArrayList;
+import java.util.HashMap;
 
-import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
-import javax.swing.JPanel;
 
+@SuppressWarnings("serial")
 public class ScoreList extends JFrame {
 
-	/**
-	 * @param args
-	 */
-	ArrayList<String> players;
-//	Player me;
-	private ArrayList<JLabel> labels = new ArrayList<JLabel>();
+	//Key: PlayerName
+	private HashMap<String, JLabel> labels = new HashMap<String, JLabel>();
 
 	
 	public ScoreList() {
@@ -28,47 +21,59 @@ public class ScoreList extends JFrame {
 		this.setResizable(true);
 		this.setLayout(new GridLayout(20, 20, 0, 0));
 		this.setVisible(true);
-//		draw();
 		this.setAlwaysOnTop(true);
 	}
-	public void draw() {
-		for (int j = 0; j < players.size(); j++) {
-				JLabel l = new JLabel(players.get(j).toString());
-				l.setSize(50,200);
-				this.add(l);
-				labels.add(l);
-		}	
-	}	
+//	public void drawPlayer() {
+//		for (int j = 0; j < players.size(); j++) {
+//				JLabel l = new JLabel(playerName + ": " + score);
+//				l.setSize(50,200);
+//				this.add(l);
+//				labels.add(l);
+//		}	
+//	}	
 		
-	public void updateScoreOnScreenAll() {
-		if (players.size() > labels.size()) {
-			//new players
-			for (int j = labels.size(); j < players.size(); j++) {
-				JLabel l = new JLabel(players.get(j).toString());
-				l.setSize(50,200);
-				this.add(l);
-				labels.add(l);
-			}		
-		}
-		if (players.size() < labels.size()) {
-			//players left game
-			for (int j = labels.size(); j > players.size(); j--) {
-				System.out.println(j);
-				JLabel lbl = labels.remove(j-1);
-				this.remove(lbl);
-				this.repaint();
-			}	
-		}
-		for (int j = 0; j < players.size(); j++) {
-			labels.get((j)).setText(players.get(j).toString());
-			
-		}
+//	public void updateScoreOnScreenAll() {
+//		if (players.size() > labels.size()) {
+//			//new players
+//			for (Map.Entry<String, String> entry : players.entrySet()) {			
+//				JLabel l = new JLabel(entry.getKey() + ": " + entry.getValue());
+//				l.setSize(50,200);
+//				this.add(l);
+//				labels.add(l);
+//			}		
+//		}
+//		if (players.size() < labels.size()) {
+//			//players left game
+//			for (int j = labels.size(); j > players.size(); j--) {
+//				System.out.println(j);
+//				JLabel lbl = labels.remove(j-1);
+//				this.remove(lbl);
+//				this.repaint();
+//			}	
+//		}
+//		for (int j = 0; j < players.size(); j++) {
+//			labels.get((j)).setText(players.get(j).toString());
+//			
+//		}
+//	
+//	}
 	
+	public void updateScore(String player, String score) {
+		JLabel l = labels.get(player);
+		l.setText(player + ": " + score);
+		//TODO: Is put() necessary or not. Make sure it is raintæt.
+		labels.put(player, l);
 	}
 	
-	public void addPlayer(String player) {
-		players.add(player);
-		updateScoreOnScreenAll();
+	public void addPlayer(String player, String score) {
+		JLabel l = new JLabel();		
+		l.setSize(50,200);
+		
+		this.add(l);
+		l.setText(player + ": " + score);
+		labels.put(player, l);
+		
+		
 	}
 
 

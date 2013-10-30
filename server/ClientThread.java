@@ -48,10 +48,9 @@ public class ClientThread extends Thread {
 						gameHandler.addPlayer(playerName);
 						
 						for (int i = 0; i < maxClientsCount; i++) {
-							if(threads[i] == clientThread){
-//								System.out.println("Get all tokens" + gameHandler.getAllPlayerTokens());
+							if (threads[i] == clientThread){
 								output.writeBytes(gameHandler.getAllPlayerTokens() + "\n");
-							}else if(threads[i] != null){
+							} else if (threads[i] != null) {
 								threads[i].output.writeBytes("new:" + gameHandler.getPlayerToken(playerName)+ "\n");
 							}
 						}
@@ -73,8 +72,12 @@ public class ClientThread extends Thread {
 									threads[i].output.writeBytes(newPosition + "\n");
 								}
 							}
-						}else{
-							System.out.println("we heff a problem. Wall hit.");
+						} else if (newPosition.startsWith("w:")) {
+							for (int i = 0; i < maxClientsCount; i++) {
+								if (threads[i] != null ) {
+									threads[i].output.writeBytes(newPosition + "\n");
+								}
+							}
 						}
 					}
 				}
@@ -100,7 +103,6 @@ public class ClientThread extends Thread {
 		}
 		
 		public boolean checkPlayerName(String playerName) {
-			System.out.println("chek nam");
 			boolean nameFound = false;	
 			for (int i = 0; i < maxClientsCount; i++) {
 				if (threads[i] != null && threads[i] != this ) {
