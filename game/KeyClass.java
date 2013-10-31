@@ -28,7 +28,7 @@ public class KeyClass implements KeyListener {
 				
 			}
 			if (ke.getKeyCode() == ke.VK_SPACE) {
-				
+				g.useWeapon();
 			}
 	}
 

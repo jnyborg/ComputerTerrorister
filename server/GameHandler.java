@@ -96,7 +96,7 @@ public class GameHandler {
 				}
 			}
 		};
-		timer.schedule(timerTask, 20000, 20000);
+		timer.schedule(timerTask, 2000, 2000);
 	}
 
 	public void calculateSpawns() {
@@ -182,7 +182,6 @@ public class GameHandler {
 					player.subOnePoint();
 					pos = "w:" + player.getName() + "#" + player.getPoint();
 				} else {
-					System.out.println("addOnePoint");
 					player.addOnePoint();
 					player.setXpos(x);
 					player.setYpos(y);
@@ -302,11 +301,13 @@ public class GameHandler {
 		return null;
 	}
 
-	public String useWeapon(String playerName, String direction) {
+	public String useWeapon(String playerName) {
+		System.out.println(playerName);
 		String token = null;
 		Player player = getPlayer(playerName);
 		int x = player.getXpos();
 		int y = player.getYpos();
+		String direction = player.getDirection();
 		if (player.getItem() == 0) {
 			Player playerHit;
 			if ((playerHit = useMelee(x, y, direction)) != null) {

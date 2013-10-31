@@ -112,7 +112,7 @@ public class GameClient implements Runnable  {
 						}
 						else if(action.startsWith("gun:")){
 							String data = action.substring(4);
-							actionData = data.substring(6).split("#");
+							actionData = data.substring(2).split("#");
 							screen.fireGun(actionData[0], Integer.parseInt(actionData[1]), Integer.parseInt(actionData[2]), Integer.parseInt(actionData[3]));
 							//if player is hit
 							if(data.startsWith("p:")){
@@ -174,9 +174,9 @@ public class GameClient implements Runnable  {
 		}
 	}
 	
-	public static void useWeapon(String direction) {
+	public static void useWeapon() {
 		try {
-			output.writeBytes("weapon:" + playerName + "#" + direction+"\n");
+			output.writeBytes("weapon:" + playerName +"\n");
 		} catch (IOException e) {
 			System.err.println(e);
 		}
