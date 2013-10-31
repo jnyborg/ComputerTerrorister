@@ -97,6 +97,42 @@ public class GameClient implements Runnable  {
 						String[] treasureData = responseLine.substring(2).split("#");
 						screen.drawTreasure(Integer.parseInt(treasureData[0]), Integer.parseInt(treasureData[1]));
 					}
+					//Player action
+					else if(responseLine.startsWith("action:")){
+						String action = responseLine.substring(7);
+						String actionData[];
+						if(action.startsWith("melee:")){
+							actionData = action.substring(6).split("#");
+							screen.meleeHit(actionData[0], Integer.parseInt(actionData[1]));
+							if(actionData[0].length() == 0){
+								//player not hit
+							}else {
+								scoreList.updateScore(actionData[0], actionData[1]);
+							}
+						}
+						else if(action.startsWith("gun:")){
+							String data = action.substring(4);
+							actionData = data.substring(6).split("#");
+							screen.fireGun(actionData[0], Integer.parseInt(actionData[1]), Integer.parseInt(actionData[2]), Integer.parseInt(actionData[3]));
+							//if player is hit
+							if(data.startsWith("p:")){
+								scoreList.updateScore(actionData[4], actionData[5]);
+								
+							//if chest is hit
+							}else if(data.startsWith("c:")){
+								screen.shootChest(Integer.parseInt(actionData[4]), Integer.parseInt(actionData[5]));
+								
+							//if wall is hit
+							}else if(data.startsWith("w:")){
+								//do nothing i dink
+							}
+
+						}
+						else if(action.startsWith("mine:")){
+							actionData = action.substring(5).split("#");
+							screen.placeMine(Integer.parseInt(actionData[0]), Integer.parseInt(actionData[1]));
+						}
+					}
 				}
 			
 				//close connection

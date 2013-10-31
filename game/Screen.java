@@ -116,6 +116,54 @@ public class Screen extends JFrame {
 	public void drawTreasure(int x, int y) {
 		labels[x][y].setIcon(new ImageIcon("./Image/Treasure.png"));
 	}
+	
+	public void fireGun(String direction, int oldX, int oldY, int hitXY){
+		//shooting right
+		if(direction.equals("r")){
+			labels[oldX+1][oldY].setIcon(new ImageIcon("./Image/ildHoejre.png"));
+			for(int i = oldX+1; i< hitXY-1; i++){
+				labels[oldX+1+i][oldY].setIcon(new ImageIcon("./Image/ildVandret.png"));
+			}
+			labels[hitXY][oldY].setIcon(new ImageIcon("./Image/ildModMurOest.png"));
+			
+			//shooting left
+		}else if(direction.equals("l")){
+			labels[oldX-1][oldY].setIcon(new ImageIcon("./Image/ildVenstre.png"));
+			for(int i = oldX-1; i< hitXY+1; i++){
+				labels[oldX-1-i][oldY].setIcon(new ImageIcon("./Image/ildVandret.png"));
+			}
+			labels[hitXY][oldY].setIcon(new ImageIcon("./Image/ildModMurVest.png"));
+			
+		//shooting up
+		}else if(direction.equals("u")){
+			labels[oldX][oldY-1].setIcon(new ImageIcon("./Image/ildOp.png"));
+			for(int i = oldY-1; i< hitXY+1; i++){
+				labels[oldX][oldY-1-i].setIcon(new ImageIcon("./Image/ildLodret.png"));
+			}
+			labels[oldX][hitXY].setIcon(new ImageIcon("./Image/ildModMurNord.png"));
+		
+		//shooting down
+		}else if(direction.equals("d")){
+			labels[oldX][oldY+1].setIcon(new ImageIcon("./Image/ildNed.png"));
+			for(int i = oldY+1; i< hitXY-1; i++){
+				labels[oldX][oldY+1+i].setIcon(new ImageIcon("./Image/ildLodret.png"));
+			}
+			labels[oldX][hitXY].setIcon(new ImageIcon("./Image/ildModMurSyd.png"));
+		}
+	}
+	
+	public void meleeHit(String playerName, int score){
+		System.out.println("player: " + playerName + " is hitting");
+	}
+	
+	public void placeMine(int x, int y){
+		labels[x][y].setIcon(new ImageIcon("./Image/Mine.png"));
+	}
+	
+	public void shootChest(int x, int y){
+		labels[x][y].setIcon(new ImageIcon("./Image/gulv2.png"));
+	}
+	
 
 	public void draw() {
 		for (int j = 0; j < 20; j++) {
