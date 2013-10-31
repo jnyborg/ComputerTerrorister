@@ -90,7 +90,7 @@ public class GameHandler {
 				}
 			}
 		};
-		timer.schedule(timerTask, 0, 10000);
+		timer.schedule(timerTask, 10000, 2000);
 	}
 	
 	

@@ -64,8 +64,9 @@ public class GameServer {
 	
 	public void createTreasures(String token) throws IOException{
 		for (int i = 0; i < maxClientsCount; i++) {
-			threads[i].getOutput().writeBytes("t:" + token);
-			
+			if(threads[i]!=null){
+				threads[i].getOutput().writeBytes("t:" + token);
+			}
 		}
 	}
 }
