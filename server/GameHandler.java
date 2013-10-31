@@ -90,7 +90,7 @@ public class GameHandler {
 				}
 			}
 		};
-		timer.schedule(timerTask, 10000, 2000);
+		timer.schedule(timerTask, 20000, 20000);
 	}
 	
 	
@@ -207,7 +207,7 @@ public class GameHandler {
 	
 	public String getRandom() {		
 		Random random = new Random();	
-		return spawns.get(random.nextInt(spawns.size()-1));		
+		return spawns.get(random.nextInt(spawns.size()-1));	
 	}
 	
 

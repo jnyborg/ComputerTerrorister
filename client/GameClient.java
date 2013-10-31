@@ -95,7 +95,7 @@ public class GameClient implements Runnable  {
 					//Treasure spawned
 					else if (responseLine.startsWith("t:")) {
 						String[] treasureData = responseLine.substring(2).split("#");
-						screen.drawTreasure(Integer.parseInt(treasureData[0]), Integer.parseInt(treasureData[0]));
+						screen.drawTreasure(Integer.parseInt(treasureData[0]), Integer.parseInt(treasureData[1]));
 					}
 				}
 			

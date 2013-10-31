@@ -55,8 +55,8 @@ public class Screen extends JFrame {
 		super("TKgame v. 1.0");
 
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
-		this.setLocation(100, 100);
-		this.setSize(500, 499);
+		this.setLocation(100,0);
+		this.setSize(900, 900);
 		this.setResizable(true);
 		this.setLayout(new GridLayout(20, 20, 0, 0));
 		draw();
