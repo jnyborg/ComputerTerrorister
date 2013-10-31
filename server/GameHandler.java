@@ -1,5 +1,6 @@
 package server;
 
+import game.Chest;
 import game.Player;
 import game.ScoreList;
 
@@ -67,6 +68,7 @@ public class GameHandler {
 	{ "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w",
 			"w", "w", "w", "w", "w", "w", "w", "w" }, };
 	private ArrayList<String> spawns = new ArrayList<String>();
+	private ArrayList<Chest> chests = new ArrayList<Chest>();
 	
 	/*
 	 * Constructor to initialize the list of players
@@ -82,9 +84,11 @@ public class GameHandler {
 		TimerTask timerTask = new TimerTask(){
 			@Override
 			public void run(){
-				String token = getRandom();
+				String[] chestPosition = getRandomSpawn().split("#");
+				Chest chest = new Chest(Integer.parseInt(chestPosition[0]), Integer.parseInt(chestPosition[1]));
+				chests.add(chest);
 				try{
-					GameServer.getInstance().createTreasures(token);
+					GameServer.getInstance().addTreasure(chest.getToken());
 				}catch(IOException e){
 					e.printStackTrace();
 				}
@@ -170,7 +174,7 @@ public class GameHandler {
 	public void addPlayer(String name) {
 		Player player = new Player(name);	
 		player.setDirection("u");
-		String spawn = getRandom();
+		String spawn = getRandomSpawn();
 		String[] position = spawn.split("#");
 		player.setXpos(Integer.parseInt(position[0]));
 		player.setYpos(Integer.parseInt(position[1]));
@@ -205,9 +209,18 @@ public class GameHandler {
 		return result;
 	}
 	
-	public String getRandom() {		
+	public String getRandomSpawn() {		
 		Random random = new Random();	
 		return spawns.get(random.nextInt(spawns.size()-1));	
+	}
+	
+	public Chest isChestHere(int x, int y) {
+		for (Chest c : chests) {
+			if (c.getX() == x && c.getY() == y) {
+				return c;
+			}
+		}
+		return null;
 	}
 	
 

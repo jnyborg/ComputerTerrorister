@@ -22,7 +22,7 @@ public class GameClient implements Runnable  {
 	private static BufferedReader inputLine;
 	private static KeyClass keyClass;
 	private static Screen screen;
-	private static ScoreList scoreList; //TODO: Implement
+	private static ScoreList scoreList; 
 	private static String playerName;
 
 	public static void main(String[] args) {

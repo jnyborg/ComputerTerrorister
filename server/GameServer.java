@@ -7,10 +7,11 @@ import java.net.ServerSocket;
 import java.net.Socket;
 
 public class GameServer {
-	
+
 	private static GameServer instance = null;
-	public static GameServer getInstance(){
-		if(instance == null){
+
+	public static GameServer getInstance() {
+		if (instance == null) {
 			instance = new GameServer();
 		}
 		return instance;
@@ -26,7 +27,9 @@ public class GameServer {
 		int portNumber = 2222;
 		// if you want to make your own portNumber
 		if (args.length < 1) {
-			System.out.println("Usage: java MultiThreadChatServer <portNumber>\n" + "Now using port number=" + portNumber);
+			System.out
+					.println("Usage: java MultiThreadChatServer <portNumber>\n"
+							+ "Now using port number=" + portNumber);
 		} else {
 			portNumber = Integer.valueOf(args[0]).intValue();
 		}
@@ -45,13 +48,15 @@ public class GameServer {
 				int i = 0;
 				for (i = 0; i < maxClientsCount; i++) {
 					if (threads[i] == null) {
-						(threads[i] = new ClientThread(connection, threads)).start();
+						(threads[i] = new ClientThread(connection, threads))
+								.start();
 						break;
 					}
 				}
 				// If the server is full. Max connections is 10.
 				if (i == maxClientsCount) {
-					DataOutputStream out = new DataOutputStream(connection.getOutputStream());
+					DataOutputStream out = new DataOutputStream(
+							connection.getOutputStream());
 					out.writeBytes("Too many people on the server, please try again later \n");
 					out.close();
 					connection.close();
@@ -61,12 +66,17 @@ public class GameServer {
 			}
 		}
 	}
-	
-	public void createTreasures(String token) throws IOException{
-		for (int i = 0; i < maxClientsCount; i++) {
-			if(threads[i]!=null){
-				threads[i].getOutput().writeBytes("t:" + token + "\n");
+
+	public void addTreasure(String token) throws IOException {
+
+		try {
+			for (int i = 0; i < maxClientsCount; i++) {
+				if (threads[i] != null) {
+					threads[i].getOutput().writeBytes(token);
+				}
 			}
+		} catch (IOException e) {
+			System.out.println(e);
 		}
 	}
 }
