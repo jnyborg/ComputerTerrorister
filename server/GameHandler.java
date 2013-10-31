@@ -3,9 +3,12 @@ package server;
 import game.Player;
 import game.ScoreList;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import java.util.Timer;
+import java.util.TimerTask;
 
 /*
  * Handles the player movements
@@ -71,12 +74,31 @@ public class GameHandler {
 	public GameHandler() {
 		players = new ArrayList<Player>();		
 		calculateSpawns();
+		createTreasures();
 	}
+	
+	public void createTreasures(){
+		Timer timer = new Timer();
+		TimerTask timerTask = new TimerTask(){
+			@Override
+			public void run(){
+				String token = getRandom();
+				try{
+					GameServer.getInstance().createTreasures(token);
+				}catch(IOException e){
+					e.printStackTrace();
+				}
+			}
+		};
+		timer.schedule(timerTask, 0, 10000);
+	}
+	
+	
 	public void calculateSpawns() { 
 		for (int x = 0; x < level.length; x++) {
 			for (int y = 0; y < level.length; y++) {
 				if (level[x][y].equals("e")) {
-					spawns.add(x +"," + y);
+					spawns.add(x +"#" + y);
 				}
 			}
 		}
@@ -148,8 +170,8 @@ public class GameHandler {
 	public void addPlayer(String name) {
 		Player player = new Player(name);	
 		player.setDirection("u");
-		String spawn = getSpawn();
-		String[] position = spawn.split(",");
+		String spawn = getRandom();
+		String[] position = spawn.split("#");
 		player.setXpos(Integer.parseInt(position[0]));
 		player.setYpos(Integer.parseInt(position[1]));
 		players.add(player);
@@ -183,9 +205,10 @@ public class GameHandler {
 		return result;
 	}
 	
-	public String getSpawn() {		
+	public String getRandom() {		
 		Random random = new Random();	
 		return spawns.get(random.nextInt(spawns.size()-1));		
 	}
 	
+
 }

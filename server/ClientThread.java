@@ -122,4 +122,8 @@ public class ClientThread extends Thread {
 			this.playerName = playerName;
 		}
 		
+		public DataOutputStream getOutput(){
+			return output;
+		}
+		
 }

@@ -27,7 +27,6 @@ public class GameClient implements Runnable  {
 
 	public static void main(String[] args) {
 		new Thread(new GameClient()).start();
-
 	}
 
 	public void run() {
@@ -87,15 +86,12 @@ public class GameClient implements Runnable  {
 						String[] playerData = responseLine.substring(4).split("#");
 						screen.drawPlayer(Integer.parseInt(playerData[1]), Integer.parseInt(playerData[2]), playerData[3]);
 						scoreList.addPlayer(playerData[0], playerData[4]);
-						
-						
 					}
 					//Player moved into wall and lost a point
 					else if (responseLine.startsWith("w:")) {
 						String[] playerData = responseLine.substring(2).split("#");
 						scoreList.updateScore(playerData[0], playerData[1]);
 					}
-					
 				}
 			
 				//close connection
@@ -104,10 +100,8 @@ public class GameClient implements Runnable  {
 				output.close();
 			} catch (IOException e) {
 				System.err.println("IOException:" + e);
-			} 
-
+			}
 		}
-		
 		
 	}
 	/*
