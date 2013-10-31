@@ -116,35 +116,79 @@ public class GameHandler {
 				break;
 			}
 		}
-		player.setDirection(tokens[1]);
 		int x = player.getXpos(),y = player.getYpos();
 		int oldX = x,oldY = y;
-		
-		if (direction.equals("r")) {
-			x = player.getXpos() + 1;
-		};
-		if (direction.equals("l")) {
-			x = player.getXpos() - 1;
-		};
-		if (direction.equals("u")) {
-			y = player.getYpos() - 1;
-		};
-		if (direction.equals("d")) {
-			y = player.getYpos() + 1;
-		};
-		if (level[x][y].equals("w")) {
-			player.subOnePoint();
-			pos = "w:" + player.getName() + "#" + player.getPoint();
-		} 
-		else {
-			player.addOnePoint();
-//			scoreList.updateScoreOnScreenAll(); //TODO: Implement
-			player.setXpos(x);
-			player.setYpos(y);
+		boolean playerAhead = false;
+		if(player.getDirection().equals(direction)){
+			if (direction.equals("r")) {
+				x = player.getXpos() + 1;
+				if(isPlayerHere(x, oldY, player)){
+					playerAhead = true;
+				}
+				//todo
+				//isPowerUpHere();
+			};
+			if (direction.equals("l")) {
+				x = player.getXpos() - 1;
+				if(isPlayerHere(x, oldY, player)){
+					playerAhead = true;
+				}
+			};
+			if (direction.equals("u")) {
+				y = player.getYpos() - 1;
+				if(isPlayerHere(oldX, y, player)){
+					playerAhead = true;
+				}
+			};
+			if (direction.equals("d")) {
+				y = player.getYpos() + 1;
+				if(isPlayerHere(oldX, y, player)){
+					playerAhead = true;
+				}
+			};
+			if(!playerAhead){
+				//no player ahead of you, youre free to move around unless wall is ahead
+				if (level[x][y].equals("w")) {
+					player.subOnePoint();
+					pos = "w:" + player.getName() + "#" + player.getPoint();
+				} 
+				else {
+					System.out.println("addOnePoint");
+					player.addOnePoint();
+					player.setXpos(x);
+					player.setYpos(y);
+					pos = "p:" + player.getName() + "#" + oldX + "#" + oldY + "#" + x + "#" + y + "#" + direction + "#" + player.getPoint();
+				}
+			}else{
+				//player is ahead of you, you cant move
+				pos = "p:" + player.getName() + "#" + oldX + "#" + oldY + "#" + oldX + "#" + oldY + "#" + player.getDirection() + "#" + player.getPoint();
+			}
+		} else{
+			//used for turning player if not same direction as input
+			player.setDirection(tokens[1]);
 			pos = "p:" + player.getName() + "#" + oldX + "#" + oldY + "#" + x + "#" + y + "#" + direction + "#" + player.getPoint();
 		}
 		return pos;
 	}
+	
+	public boolean isPlayerHere(int x, int y, Player me){
+		boolean isHere = false;
+		ArrayList<Player> tempPlayers = new ArrayList<Player>();
+		for(Player p: players){
+			if(p.getName() != me.getName()){
+				tempPlayers.add(p);
+			}
+		}
+		for(Player p: tempPlayers){
+			if(p.getXpos() == x && p.getYpos() == y){
+				isHere = true;
+			}
+		}
+		return isHere;
+	}
+	
+	
+	
 
 	public List<Player> getPlayers() {
 		return players;
