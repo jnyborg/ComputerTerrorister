@@ -6,6 +6,10 @@ public class Player {
 	int ypos;
 	int point;
 	String direction;
+	int item;
+	final int ITEM_MELEE = 0, ITEM_GUN = 1, ITEM_MINE = 2;
+	int ammonition;
+	
 
 	public Player(String name) {
 		this.name = name;
@@ -13,6 +17,8 @@ public class Player {
 		ypos = 7;
 		point = 0;
 		direction = "u";
+		item = ITEM_MELEE;
+		ammonition = 0;
 	}
 
 	public String getName() {
@@ -73,5 +79,28 @@ public class Player {
 	
 	public void subPoints(int points){
 		point= point - points;
+	}
+
+	public void giveWeapon(int itemChoice) {
+		if (itemChoice == ITEM_GUN) {
+			item = ITEM_GUN;
+			ammonition = 10;
+		} else if (itemChoice == ITEM_MINE) {
+			item = ITEM_MINE;
+			ammonition = 1;
+		}
+	}
+	
+	public void useWeapon() {
+		if (ammonition != 0) {
+			ammonition--;
+		} else {
+			item = ITEM_MELEE;
+		}		
+		
+	}
+	
+	public int getItem() {
+		return item;
 	}
 }

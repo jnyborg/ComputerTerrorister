@@ -137,6 +137,14 @@ public class GameClient implements Runnable  {
 			System.err.println(e);
 		}
 	}
+	
+	public static void useWeapon(String direction) {
+		try {
+			output.writeBytes("weapon:" + playerName + "#" + direction+"\n");
+		} catch (IOException e) {
+			System.err.println(e);
+		}
+	}
 }
 
 

@@ -27,6 +27,9 @@ public class KeyClass implements KeyListener {
 				g.movePlayer("r");
 				
 			}
+			if (ke.getKeyCode() == ke.VK_SPACE) {
+				
+			}
 	}
 
 		public void keyReleased(KeyEvent ke) {

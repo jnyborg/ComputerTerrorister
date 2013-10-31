@@ -64,7 +64,7 @@ public class ClientThread extends Thread {
 				 */
 				String responseLine;
 				while((responseLine = input.readLine()) != null) {
-					if(responseLine.substring(0,5).equals("move:")){
+					if(responseLine.startsWith("move:")){
 						String newPosition = gameHandler.playerMoved(responseLine.substring(5));
 						if(newPosition.startsWith("p:")){
 							for (int i = 0; i < maxClientsCount; i++) {
@@ -77,6 +77,14 @@ public class ClientThread extends Thread {
 								if (threads[i] != null ) {
 									threads[i].output.writeBytes(newPosition + "\n");
 								}
+							}
+						}
+					} else if(responseLine.startsWith("weapon:")) {
+						String[] split = responseLine.substring(6).split("#");
+						String token = gameHandler.useWeapon(split[0], split[1]);
+						for (int i = 0; i < maxClientsCount; i++) {
+							if (threads[i] != null ) {
+								threads[i].output.writeBytes(token + "\n");
 							}
 						}
 					}
