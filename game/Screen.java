@@ -112,6 +112,10 @@ public class Screen extends JFrame {
 		;
 
 	}
+	
+	public void drawTreasure(int x, int y) {
+		labels[x][y].setIcon(new ImageIcon("./Image/Treasure.png"));
+	}
 
 	public void draw() {
 		for (int j = 0; j < 20; j++) {
