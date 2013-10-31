@@ -66,4 +66,12 @@ public class Player {
 	public void subOnePoint() {
 		point--;
 	}
+	
+	public void addPoints(int points){
+		point= point + points;
+	}
+	
+	public void subPoints(int points){
+		point= point - points;
+	}
 }

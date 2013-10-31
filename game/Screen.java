@@ -56,7 +56,7 @@ public class Screen extends JFrame {
 
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setLocation(100,0);
-		this.setSize(900, 900);
+		this.setSize(500, 500);
 		this.setResizable(true);
 		this.setLayout(new GridLayout(20, 20, 0, 0));
 		draw();
