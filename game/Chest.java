@@ -19,19 +19,17 @@ public class Chest {
 	}
 
 	public void generateTreasure() {
-//		isItem = random.nextBoolean();
-		isItem = true;
-		itemChoice = ITEM_MINE;
-//		if (isItem) {
-//			boolean isGun = random.nextBoolean();
-//			if (isGun) {
-//				itemChoice = ITEM_GUN;
-//			} else {
-//				itemChoice = ITEM_MINE;
-//			}
-//		} else {
-//			numberOfCoins = random.nextInt(100) + 10;
-//		}
+		isItem = random.nextBoolean();
+		if (isItem) {
+			boolean isGun = random.nextBoolean();
+			if (isGun) {
+				itemChoice = ITEM_GUN;
+			} else {
+				itemChoice = ITEM_MINE;
+			}
+		} else {
+			numberOfCoins = random.nextInt(100) + 10;
+		}
 
 	}
 
