@@ -159,13 +159,10 @@ public class Screen extends JFrame {
 			for(int i = (oldY-1); i >= hitXY; i--){
 				if(i == (oldY-1)){
 					labels[oldX][oldY-1].setIcon(new ImageIcon("./Image/ildOp.png"));
-					System.out.println("this");
 				}else if(i == hitXY){
-					labels[oldX][hitXY].setIcon(new ImageIcon("./Image/ildModMurNord.png"));	
-					System.out.println("this");
+					labels[oldX][hitXY].setIcon(new ImageIcon("./Image/ildModMurNord.png"));
 				}else{
 					labels[oldX][i].setIcon(new ImageIcon("./Image/ildLodret.png"));
-					System.out.println("this");
 				}
 				beams.add(oldX + "," + i);
 			}
@@ -211,7 +208,7 @@ public class Screen extends JFrame {
 		labels[x][y].setIcon(new ImageIcon("./Image/Mine.png"));
 	}
 	
-	public void shootChest(int x, int y){
+	public void putFloor(int x, int y){
 		labels[x][y].setIcon(new ImageIcon("./Image/gulv2.png"));
 	}
 	

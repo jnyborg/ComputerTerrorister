@@ -62,7 +62,6 @@ public class GameClient implements Runnable  {
 					output.writeBytes(tempName+"\n");
 					if((responseLine = input.readLine()).startsWith("Welcome")){
 						playerName = tempName;
-						
 						//Listen to next input from server, which should be a token with player info
 						responseLine = input.readLine();
 						System.out.println("responseline: " + responseLine);
@@ -79,7 +78,6 @@ public class GameClient implements Runnable  {
 					if (responseLine.startsWith("p:")) {
 						String[] playerData = responseLine.substring(2).split("#");
 						screen.movePlayerOnScreen(Integer.parseInt(playerData[1]), Integer.parseInt(playerData[2]), Integer.parseInt(playerData[3]), Integer.parseInt(playerData[4]), playerData[5]);
-						scoreList.updateScore(playerData[0], playerData[6]);
 					}
 					//New player joined
 					else if (responseLine.startsWith("new:")) {
@@ -87,11 +85,6 @@ public class GameClient implements Runnable  {
 						screen.drawPlayer(Integer.parseInt(playerData[1]), Integer.parseInt(playerData[2]), playerData[3]);
 						scoreList.addPlayer(playerData[0], playerData[4]);
 					}
-					//Player moved into wall and lost a point
-					else if (responseLine.startsWith("w:")) {
-						String[] playerData = responseLine.substring(2).split("#");
-						scoreList.updateScore(playerData[0], playerData[1]);
-					} 
 					//Treasure spawned
 					else if (responseLine.startsWith("t:")) {
 						String[] treasureData = responseLine.substring(2).split("#");
@@ -99,39 +92,46 @@ public class GameClient implements Runnable  {
 					}
 					//Player action
 					else if(responseLine.startsWith("action:")){
-						String action = responseLine.substring(7);
-						String actionData[];
-						if(action.startsWith("melee:")){
-							actionData = action.substring(6).split("#");
-							screen.meleeHit(actionData[0], Integer.parseInt(actionData[1]));
-							if(actionData[0].length() == 0){
-								//player not hit
-							}else {
-								scoreList.updateScore(actionData[0], actionData[1]);
+						System.out.println("Received action");
+						String[] actions = responseLine.split("¤");
+						for (String s : actions) {
+							String action = s.substring(7);
+							String actionData[];
+							if(action.startsWith("melee:")){
+								actionData = action.substring(6).split("#");
+								screen.meleeHit(actionData[0], Integer.parseInt(actionData[1]));
+								if(actionData[0].length() == 0){
+									//player not hit
+								}else {
+									scoreList.updateScore(actionData[0], actionData[1]);
+								}
 							}
-						}
-						else if(action.startsWith("gun:")){
-							String data = action.substring(4);
-							actionData = data.substring(2).split("#");
-							screen.fireGun(actionData[0], Integer.parseInt(actionData[1]), Integer.parseInt(actionData[2]), Integer.parseInt(actionData[3]));
-							//if player is hit
-							if(data.startsWith("p:")){
-								scoreList.updateScore(actionData[4], actionData[5]);
-								
-							//if chest is hit
-							}else if(data.startsWith("c:")){
-								screen.shootChest(Integer.parseInt(actionData[4]), Integer.parseInt(actionData[5]));
-								
-							//if wall is hit
-							}else if(data.startsWith("w:")){
-								//do nothing i dink
-							}
+							else if(action.startsWith("gun:")){
+								String data = action.substring(4);
+								actionData = data.substring(2).split("#");
+								screen.fireGun(actionData[0], Integer.parseInt(actionData[1]), Integer.parseInt(actionData[2]), Integer.parseInt(actionData[3]));
+								//if player is hit
+								if(data.startsWith("p:")){
+									scoreList.updateScore(actionData[4], actionData[5]);
+									
+								//if chest is hit
+								}else if(data.startsWith("c:")){
+									screen.putFloor(Integer.parseInt(actionData[4]), Integer.parseInt(actionData[5]));
+						
+								}
 
+							}
+							else if(action.startsWith("mine:")){
+								actionData = action.substring(5).split("#");
+								screen.placeMine(Integer.parseInt(actionData[0]), Integer.parseInt(actionData[1]));
+							}
+							else if(action.startsWith("boom:")) {
+								actionData = action.substring(5).split("#");
+								screen.putFloor(Integer.parseInt(actionData[0]), Integer.parseInt(actionData[1]));
+							}
 						}
-						else if(action.startsWith("mine:")){
-							actionData = action.substring(5).split("#");
-							screen.placeMine(Integer.parseInt(actionData[0]), Integer.parseInt(actionData[1]));
-						}
+						
+						
 					}
 				}
 			

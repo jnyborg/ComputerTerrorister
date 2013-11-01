@@ -91,11 +91,7 @@ public class GameHandler {
 				Chest chest = new Chest(Integer.parseInt(chestPosition[0]),
 						Integer.parseInt(chestPosition[1]));
 				chests.add(chest);
-				try {
-					GameServer.getInstance().addTreasure(chest.getToken());
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
+				GameServer.getInstance().fireEvent(chest.getToken());
 			}
 		};
 		timer.schedule(timerTask, 2000, 10000);
@@ -110,110 +106,69 @@ public class GameHandler {
 			}
 		}
 	}
-
-	public String playerMoved(String token) {
-		String[] tokens = token.split("#");
-		String playerName = tokens[0];
-		String direction = tokens[1];
-		Player player = getPlayer(playerName);
-		String pos;
-		Chest c;
-
+	
+	public String movePlayer(String moveData) {
+		//Setup
+		String[] data = moveData.split("#");
+		Player player = getPlayer(data[0]);
+		String direction = data[1];	
 		int x = player.getXpos(), y = player.getYpos();
 		int oldX = x, oldY = y;
-		boolean playerAhead = false;
-		// move player
+		boolean isX = isX(direction), countUp = countUp(direction);
+		Chest c;
+		String result = "";
+		
+		//Check if player should turn or should move
 		if (player.getDirection().equals(direction)) {
-			if (direction.equals("r")) {
-				x = player.getXpos() + 1;
-				if (isPlayerHere(x, oldY, player) != null) {
-					playerAhead = true;
-				} else if ((c = isChestHere(x, oldY)) != null) {
-					chests.remove(c);
-					if (!c.isItem()) {
-						player.addPoints(c.getNumberOfCoins());
-					} else {
-						player.giveWeapon(c.getItemChoice());
-					}
-				}
-			}
-			;
-			if (direction.equals("l")) {
-				x = player.getXpos() - 1;
-				if (isPlayerHere(x, oldY, player) != null) {
-					playerAhead = true;
-				} else if ((c = isChestHere(x, oldY)) != null) {
-					chests.remove(c);
-					if (!c.isItem()) {
-						player.addPoints(c.getNumberOfCoins());
-					} else {
-						player.giveWeapon(c.getItemChoice());
-					}
-				}
-			}
-			;
-			if (direction.equals("u")) {
-				y = player.getYpos() - 1;
-				if (isPlayerHere(oldX, y, player) != null) {
-					playerAhead = true;
-				} else if ((c = isChestHere(oldX, y)) != null) {
-					chests.remove(c);
-					if (!c.isItem()) {
-						player.addPoints(c.getNumberOfCoins());
-					} else {
-						player.giveWeapon(c.getItemChoice());
-					}
-				}
-			}
-			;
-			if (direction.equals("d")) {
-				y = player.getYpos() + 1;
-				if (isPlayerHere(oldX, y, player) != null) {
-					playerAhead = true;
-				} else if ((c = isChestHere(oldX, y)) != null) {
-					chests.remove(c);
-					if (!c.isItem()) {
-						player.addPoints(c.getNumberOfCoins());
-					} else {
-						player.giveWeapon(c.getItemChoice());
-					}
-				}
-			}
-			;
-			if (!playerAhead) {
-				// no player ahead of you, youre free to move around unless wall
-				// is ahead
-				if (level[x][y].equals("w")) {
-					player.subOnePoint();
-					pos = "w:" + player.getName() + "#" + player.getPoint();
-				} else {
-					player.addOnePoint();
-					player.setXpos(x);
-					player.setYpos(y);
-					pos = "p:" + player.getName() + "#" + oldX + "#" + oldY
-							+ "#" + x + "#" + y + "#" + direction + "#"
-							+ player.getPoint();
-				}
+			//Figure out to which coordinate player i moving to, and save in temporaryPos
+			if (isX) {
+				if (countUp)
+					x++;
+				else
+					x--;
 			} else {
-				// player is ahead of you, you cant move
-				pos = "p:" + player.getName() + "#" + oldX + "#" + oldY + "#"
-						+ oldX + "#" + oldY + "#" + player.getDirection() + "#"
-						+ player.getPoint();
+				if (countUp)
+					y++;
+				else 
+					y--;
 			}
-
-			// used for turning player if not same direction as input
-		} else {
-
-			player.setDirection(tokens[1]);
-			pos = "p:" + player.getName() + "#" + oldX + "#" + oldY + "#" + x
+			
+			//Is player walking into wall, player or mine, do nothing
+			if (level[x][y].equals("w") || isPlayerHere(x, y, player) != null || isMineHere(x, y) != null) {
+				//Do nothing, result = ""
+			} 
+			//Check if player walks over chest
+			else if ((c = isChestHere(x, y)) != null) {
+				chests.remove(c);
+				if (!c.isItem()) {
+					player.addPoints(c.getNumberOfCoins());
+				} else {
+					player.giveWeapon(c.getItemChoice());
+				}
+				player.setXpos(x);player.setYpos(y);
+				result = "p:" + player.getName() + "#" + oldX + "#" + oldY + "#" + x
+						+ "#" + y + "#" + direction + "#" + player.getPoint();
+			} 
+			//Move player as normal
+			else {
+				result = "p:" + player.getName() + "#" + oldX + "#" + oldY + "#" + x + "#" + y + "#" + direction;
+				player.setXpos(x);player.setYpos(y);
+			}
+				
+		} 
+		//Turn player
+		else {
+			player.setDirection(direction);
+			result = "p:" + player.getName() + "#" + oldX + "#" + oldY + "#" + x
 					+ "#" + y + "#" + direction + "#" + player.getPoint();
 		}
-		return pos;
+		
+		return result;	
+		
 	}
 
 	public Player isPlayerHere(int x, int y, Player me) {
 		Player result = null;
-		ArrayList<Player> tempPlayers = new ArrayList<Player>();
 		for (Player p : players) {
 			if (p != me) {
 				if (p.getXpos() == x && p.getYpos() == y) {
@@ -224,7 +179,7 @@ public class GameHandler {
 		return result;
 	}
 	
-	public Mine isMineHere(int x, int y, Player player) {
+	public Mine isMineHere(int x, int y) {
 		Mine m = null;
 		for (Mine mine : mines) {
 			if (mine.getX() == x && mine.getY() == y) {
@@ -248,6 +203,26 @@ public class GameHandler {
 
 	public void setScoreList(ScoreList scoreList) {
 		this.scoreList = scoreList;
+	}
+	
+	public boolean isX(String direction) {
+		boolean isX = false;
+		if (direction.equals("r") || direction.equals("l")) {
+			isX = true;		
+		} else if (direction.equals("u") || direction.equals("d")) {
+			isX = false; 
+		}
+		return isX;
+	}
+	
+	public boolean countUp(String direction) {
+		boolean countUp = false;
+		if (direction.equals("r") || direction.equals("d")) {
+			countUp = true;		
+		} else if (direction.equals("l") || direction.equals("u")) {
+			countUp = false; 
+		}
+		return countUp;
 	}
 
 	/**
@@ -290,13 +265,11 @@ public class GameHandler {
 	 * @return the token
 	 */
 	public String getAllPlayerTokens() {
-		// denne printer kun en spiller ud! Add metoden overskriver spillere....
 		String result = "";
 		for (Player p : players) {
 			result += p.getName() + "#" + p.getXpos() + "#" + p.getYpos() + "#"
 					+ p.getDirection() + "#" + p.getPoint() + "¤";
 		}
-		System.out.println("reusltafter " + result);
 		return result;
 	}
 
@@ -328,12 +301,13 @@ public class GameHandler {
 			}
 		} else if (player.getItem() == 1) {
 			player.useWeapon();
-			token = useGun(x, y, direction);
+			token = calculateBeams(x, y, direction);
 		} else if (player.getItem() == 2) {
 			Mine m = useMine(x, y, direction, player);
 			if (m != null){
 				token = "action:mine:" + m.getX() + "#" + m.getY();
 				player.useWeapon();
+				m.startTimer();
 			} 
 		}
 		return token;
@@ -345,110 +319,88 @@ public class GameHandler {
 		if (direction.equals("r")) {
 			if ((playerHit = isPlayerHere(x + 1, y, null)) != null) {
 				playerHit.subOnePoint();
-
 			}
 
 		} else if (direction.equals("l")) {
 			if ((playerHit = isPlayerHere(x - 1, y, null)) != null) {
 				playerHit.subOnePoint();
-
 			}
 		} else if (direction.equals("u")) {
 			if ((playerHit = isPlayerHere(x, y - 1, null)) != null) {
 				playerHit.subOnePoint();
-
 			}
 		} else if (direction.equals("d")) {
 			if ((playerHit = isPlayerHere(x, y + 1, null)) != null) {
 				playerHit.subOnePoint();
-
 			}
 		}
 		return playerHit;
 
 	}
-
-	private String useGun(int x, int y, String direction) {
-		boolean hitSomething = false;
-		String token = null;
-		Chest chestHit;
-		Player playerHit;
-		int xPos = x; int yPos = y;
+	
+	public String calculateBeams(int x, int y, String direction) {
+		int xPos = x, yPos = y;
+		boolean countUp = false, isX = false;
 		if (direction.equals("r")) {
-			while (!hitSomething) {
-				xPos++;
-				if((playerHit = isPlayerHere(xPos, yPos, null)) != null) {
-					playerHit.subOnePoint();
-					token = "action:gun:p:" + direction + "#" + x + "#" + y + "#" + (xPos-1) + "#" + playerHit.getName() + "#" + playerHit.getPoint();
-					hitSomething = true;
-				} else if ((chestHit = isChestHere(xPos, yPos)) != null) {
-					chests.remove(chestHit);
-					token = "action:gun:c:" + direction + "#" + x + "#" + y + "#" + (xPos-1) + "#" + xPos + "#" + yPos;
-					hitSomething = true;
-				} else if (level[xPos][yPos].equals("w")) {
-					token = "action:gun:w:" + direction + "#" + x + "#" + y + "#" + (xPos-1) + "#" + "" + "#" + "";
-					System.out.println("token: " + token);
-					hitSomething = true;
-				} 
-				
-			}
+			isX = true; countUp = true;
 		} else if (direction.equals("l")) {
-			while (!hitSomething) {
-				xPos--;
-				if((playerHit = isPlayerHere(xPos, yPos, null)) != null) {
-					playerHit.subOnePoint();
-					token = "action:gun:p:" + direction + "#" + x + "#" + y + "#" + (xPos+1) + "#" + playerHit.getName() + "#" + playerHit.getPoint();
-					hitSomething = true;
-				} else if ((chestHit = isChestHere(xPos, yPos)) != null) {
-					chests.remove(chestHit);
-					token = "action:gun:c:" + direction + "#" + x + "#" + y + "#" + (xPos+1) + "#" + xPos + "#" + yPos;
-					hitSomething = true;
-				} else if (level[xPos][yPos].equals("w")) {
-					token = "action:gun:w:" + direction + "#" + x + "#" + y + "#" + (xPos+1) + "#" + "" + "#" + "";
-					hitSomething = true;
-				} 
-			}
-
+			isX = true; countUp = false;
 		} else if (direction.equals("u")) {
-			while (!hitSomething) {
-				yPos--;
-				if((playerHit = isPlayerHere(xPos, yPos, null)) != null) {
-					playerHit.subOnePoint();
-					token = "action:gun:p:" + direction + "#" + x + "#" + y + "#" + (yPos+1) + "#" + playerHit.getName() + "#" + playerHit.getPoint();
-					hitSomething = true;
-				} else if ((chestHit = isChestHere(xPos, yPos)) != null) {
-					chests.remove(chestHit);
-					token = "action:gun:c:" + direction + "#" + x + "#" + y + "#" + (yPos+1) + "#" + xPos + "#" + yPos;
-					hitSomething = true;
-				} else if (level[xPos][yPos].equals("w")) {
-					token = "action:gun:w:" + direction + "#" + x + "#" + y + "#" + (yPos+1) + "#" + "" + "#" + "";
-					hitSomething = true;
-				} 
-			}
-
+			isX = false; countUp = false;
 		} else if (direction.equals("d")) {
-			while (!hitSomething) {
-				yPos++;
-				if((playerHit = isPlayerHere(xPos, yPos, null)) != null) {
-					playerHit.subOnePoint();
-					token = "action:gun:p:" + direction + "#" + x + "#" + y + "#" + (yPos-1) + "#" + playerHit.getName() + "#" + playerHit.getPoint();
-					hitSomething = true;
-				} else if ((chestHit = isChestHere(xPos, yPos)) != null) {
-					chests.remove(chestHit);
-					token = "action:gun:c:" + direction + "#" + x + "#" + y + "#" + (yPos-1) + "#" + xPos + "#" + yPos;
-					hitSomething = true;
-				} else if (level[xPos][yPos].equals("w")) {
-					token = "action:gun:w:" + direction + "#" + x + "#" + y + "#" + (yPos-1) + "#" + "" + "#" + "";
-					hitSomething = true;
-				} 
-			}
-
+			isX = false; countUp = true;
 		}
-		return token;
+		boolean hitSomething = false; Player playerHit; Chest chestHit; String result = ""; int hitXY;
+		while (!hitSomething) {
+			if (isX) {
+				if (countUp) {
+					xPos++;
+					hitXY = xPos-1;
+				} else {
+					xPos--;
+					hitXY = xPos+1;
+				}
+			} else {
+				if (countUp) {
+					yPos++;
+					hitXY = yPos-1;
+				} else {
+					yPos--;
+					hitXY = yPos+1;
+				}
+			}
+			if((playerHit = isPlayerHere(xPos, yPos, null)) != null) {
+				playerHit.subPoints(20);
+				result = "action:gun:p:" + direction + "#" + x + "#" + y + "#" + hitXY + "#" + playerHit.getName() + "#" + playerHit.getPoint();
+				hitSomething = true;
+			} else if ((chestHit = isChestHere(xPos, yPos)) != null) {
+				chests.remove(chestHit);
+				result = "action:gun:c:" + direction + "#" + x + "#" + y + "#" + hitXY + "#" + xPos + "#" + yPos;
+				hitSomething = true;
+			} else if (level[xPos][yPos].equals("w")) {
+				result = "action:gun:w:" + direction + "#" + x + "#" + y + "#" + hitXY + "#" + "" + "#" + "";
+				hitSomething = true;
+			} 
+			
+		}
+		return result;	
+		
+	}
+	
+	public void detonateMine(Mine mine) {
+		String token = "";
+		int x = mine.getX();
+		int y = mine.getY();
+		token += calculateBeams(x, y, "r") + "¤";
+		token += calculateBeams(x, y, "l") + "¤";
+		token += calculateBeams(x, y, "u") + "¤";
+		token += calculateBeams(x, y, "d");
+		mines.remove(mine);
+		GameServer.getInstance().fireEvent(token + "¤action:boom:"+x+"#"+y + "\n");
+		
 	}
 
 	private Mine useMine(int x, int y, String direction, Player player) {
-		String token = "";
 		int xPos = x; int yPos = y;
 		Mine m = null;
 		if (direction.equals("r")) {
