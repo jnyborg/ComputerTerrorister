@@ -1,10 +1,16 @@
 package game;
 
 import java.awt.GridLayout;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+
+import server.GameServer;
 
 public class Screen extends JFrame {
 	private JLabel[][] labels = new JLabel[20][20];
@@ -118,38 +124,83 @@ public class Screen extends JFrame {
 	}
 	
 	public void fireGun(String direction, int oldX, int oldY, int hitXY){
+		ArrayList<String> beams = new ArrayList<String>();
 		//shooting right
 		if(direction.equals("r")){
-			labels[oldX+1][oldY].setIcon(new ImageIcon("./Image/ildHoejre.png"));
-			for(int i = oldX+1; i< hitXY-1; i++){
-				labels[oldX+1+i][oldY].setIcon(new ImageIcon("./Image/ildVandret.png"));
+			for(int i = (oldX+1); i <= hitXY; i++){
+				if(i == (oldX+1)){
+					labels[oldX+1][oldY].setIcon(new ImageIcon("./Image/ildHoejre.png"));
+				}else if(i == hitXY){
+					labels[hitXY][oldY].setIcon(new ImageIcon("./Image/ildModMurOest.png"));
+				}else{
+					labels[i][oldY].setIcon(new ImageIcon("./Image/ildVandret.png"));
+				}
+				beams.add(i + "," + oldY);
 			}
-			labels[hitXY][oldY].setIcon(new ImageIcon("./Image/ildModMurOest.png"));
+			deleteBeam(beams);
 			
 			//shooting left
 		}else if(direction.equals("l")){
-			labels[oldX-1][oldY].setIcon(new ImageIcon("./Image/ildVenstre.png"));
-			for(int i = oldX-1; i< hitXY+1; i++){
-				labels[oldX-1-i][oldY].setIcon(new ImageIcon("./Image/ildVandret.png"));
+			for(int i = (oldX-1); i >= hitXY; i--){
+				if(i == (oldX-1)){
+					labels[oldX-1][oldY].setIcon(new ImageIcon("./Image/ildVenstre.png"));
+				}else if(i == hitXY){
+					labels[hitXY][oldY].setIcon(new ImageIcon("./Image/ildModMurVest.png"));
+				}else{
+					labels[i][oldY].setIcon(new ImageIcon("./Image/ildVandret.png"));
+				}
+				beams.add(i +"," + oldY);
 			}
-			labels[hitXY][oldY].setIcon(new ImageIcon("./Image/ildModMurVest.png"));
+			deleteBeam(beams);
 			
 		//shooting up
 		}else if(direction.equals("u")){
-			labels[oldX][oldY-1].setIcon(new ImageIcon("./Image/ildOp.png"));
-			for(int i = oldY-1; i< hitXY+1; i++){
-				labels[oldX][oldY-1-i].setIcon(new ImageIcon("./Image/ildLodret.png"));
+			System.out.println("oldY: " +  oldY + " hitXY: " + hitXY);
+			for(int i = (oldY-1); i >= hitXY; i--){
+				if(i == (oldY-1)){
+					labels[oldX][oldY-1].setIcon(new ImageIcon("./Image/ildOp.png"));
+					System.out.println("this");
+				}else if(i == hitXY){
+					labels[oldX][hitXY].setIcon(new ImageIcon("./Image/ildModMurNord.png"));	
+					System.out.println("this");
+				}else{
+					labels[oldX][i].setIcon(new ImageIcon("./Image/ildLodret.png"));
+					System.out.println("this");
+				}
+				beams.add(oldX + "," + i);
 			}
-			labels[oldX][hitXY].setIcon(new ImageIcon("./Image/ildModMurNord.png"));
+			deleteBeam(beams);
 		
 		//shooting down
 		}else if(direction.equals("d")){
-			labels[oldX][oldY+1].setIcon(new ImageIcon("./Image/ildNed.png"));
-			for(int i = oldY+1; i< hitXY-1; i++){
-				labels[oldX][oldY+1+i].setIcon(new ImageIcon("./Image/ildLodret.png"));
+			for(int i = (oldY+1); i <= hitXY; i++){
+				if(i == (oldY+1)){
+					labels[oldX][oldY+1].setIcon(new ImageIcon("./Image/ildNed.png"));
+				}else if(i == hitXY){
+					labels[oldX][hitXY].setIcon(new ImageIcon("./Image/ildModMurSyd.png"));
+				}else{
+					labels[oldX][i].setIcon(new ImageIcon("./Image/ildLodret.png"));
+				}
+				beams.add(oldX + "," + i);
 			}
-			labels[oldX][hitXY].setIcon(new ImageIcon("./Image/ildModMurSyd.png"));
+			deleteBeam(beams);
 		}
+	}
+	
+	public void deleteBeam(final ArrayList<String> beams){
+		Timer timer = new Timer();
+		TimerTask timerTask = new TimerTask() {
+			@Override
+			public void run() {
+				for(String s: beams){
+					String[] xy = s.split(","); 
+					labels[Integer.parseInt(xy[0])][Integer.parseInt(xy[1])].setIcon(new ImageIcon("./Image/gulv2.png"));
+				}
+			}
+		};
+		timer.schedule(timerTask, 60);
+		
+		
 	}
 	
 	public void meleeHit(String playerName, int score){

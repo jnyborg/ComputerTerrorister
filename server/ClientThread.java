@@ -82,9 +82,11 @@ public class ClientThread extends Thread {
 					} else if(responseLine.startsWith("weapon:")) {
 						
 						String token = gameHandler.useWeapon(responseLine.substring(7));
-						for (int i = 0; i < maxClientsCount; i++) {
-							if (threads[i] != null ) {
-								threads[i].output.writeBytes(token + "\n");
+						if (token != null){
+							for (int i = 0; i < maxClientsCount; i++) {
+								if (threads[i] != null ) {
+									threads[i].output.writeBytes(token + "\n");
+								}
 							}
 						}
 					}

@@ -1,6 +1,7 @@
 package server;
 
 import game.Chest;
+import game.Mine;
 import game.Player;
 import game.ScoreList;
 
@@ -70,6 +71,7 @@ public class GameHandler {
 					"w", "w", "w", "w", "w", "w", "w" }, };
 	private ArrayList<String> spawns = new ArrayList<String>();
 	private ArrayList<Chest> chests = new ArrayList<Chest>();
+	private ArrayList<Mine> mines = new ArrayList<Mine>();
 
 	/*
 	 * Constructor to initialize the list of players
@@ -96,7 +98,7 @@ public class GameHandler {
 				}
 			}
 		};
-		timer.schedule(timerTask, 2000, 2000);
+		timer.schedule(timerTask, 2000, 10000);
 	}
 
 	public void calculateSpawns() {
@@ -127,11 +129,14 @@ public class GameHandler {
 				if (isPlayerHere(x, oldY, player) != null) {
 					playerAhead = true;
 				} else if ((c = isChestHere(x, oldY)) != null) {
+					chests.remove(c);
 					if (!c.isItem()) {
 						player.addPoints(c.getNumberOfCoins());
 					} else {
 						player.giveWeapon(c.getItemChoice());
 					}
+				} else if (()){
+					
 				}
 
 			}
@@ -141,6 +146,7 @@ public class GameHandler {
 				if (isPlayerHere(x, oldY, player) != null) {
 					playerAhead = true;
 				} else if ((c = isChestHere(x, oldY)) != null) {
+					chests.remove(c);
 					if (!c.isItem()) {
 						player.addPoints(c.getNumberOfCoins());
 					} else {
@@ -154,6 +160,7 @@ public class GameHandler {
 				if (isPlayerHere(oldX, y, player) != null) {
 					playerAhead = true;
 				} else if ((c = isChestHere(oldX, y)) != null) {
+					chests.remove(c);
 					if (!c.isItem()) {
 						player.addPoints(c.getNumberOfCoins());
 					} else {
@@ -167,6 +174,7 @@ public class GameHandler {
 				if (isPlayerHere(oldX, y, player) != null) {
 					playerAhead = true;
 				} else if ((c = isChestHere(oldX, y)) != null) {
+					chests.remove(c);
 					if (!c.isItem()) {
 						player.addPoints(c.getNumberOfCoins());
 					} else {
@@ -219,6 +227,16 @@ public class GameHandler {
 		}
 
 		return result;
+	}
+	
+	public Mine isMineHere(int x, int y, Player player) {
+		Mine m = null;
+		for (Mine mine : mines) {
+			if (mine.getX() == x && mine.getY() == y) {
+				m = mine;
+			}
+		}
+		return m;
 	}
 
 	public List<Player> getPlayers() {
@@ -317,7 +335,11 @@ public class GameHandler {
 			player.useWeapon();
 			token = useGun(x, y, direction);
 		} else if (player.getItem() == 2) {
-
+			Mine m = useMine(x, y, direction, player);
+			if (m != null){
+				token = "action:mine:" + m.getX() + "#" + m.getY();
+				player.useWeapon();
+			} 
 		}
 		return token;
 
@@ -362,15 +384,15 @@ public class GameHandler {
 				xPos++;
 				if((playerHit = isPlayerHere(xPos, yPos, null)) != null) {
 					playerHit.subOnePoint();
-					token = "action:gun:p:" + direction + "#" + x + "#" + y + "#" + xPos-- + "#" + playerHit.getName() + "#" + playerHit.getPoint();
+					token = "action:gun:p:" + direction + "#" + x + "#" + y + "#" + (xPos-1) + "#" + playerHit.getName() + "#" + playerHit.getPoint();
 					hitSomething = true;
 				} else if ((chestHit = isChestHere(xPos, yPos)) != null) {
-					int newPos = xPos--;
 					chests.remove(chestHit);
-					token = "action:gun:c:" + direction + "#" + x + "#" + y + "#" + newPos + "#" + xPos + "#" + yPos;
+					token = "action:gun:c:" + direction + "#" + x + "#" + y + "#" + (xPos-1) + "#" + xPos + "#" + yPos;
 					hitSomething = true;
 				} else if (level[xPos][yPos].equals("w")) {
-					token = "action:gun:w:" + direction + "#" + x + "#" + y + "#" + xPos-- + "#" + "" + "#" + "";
+					token = "action:gun:w:" + direction + "#" + x + "#" + y + "#" + (xPos-1) + "#" + "" + "#" + "";
+					System.out.println("token: " + token);
 					hitSomething = true;
 				} 
 				
@@ -380,51 +402,48 @@ public class GameHandler {
 				xPos--;
 				if((playerHit = isPlayerHere(xPos, yPos, null)) != null) {
 					playerHit.subOnePoint();
-					token = "action:gun:p:" + direction + "#" + x + "#" + y + "#" + xPos++ + "#" + playerHit.getName() + "#" + playerHit.getPoint();
+					token = "action:gun:p:" + direction + "#" + x + "#" + y + "#" + (xPos+1) + "#" + playerHit.getName() + "#" + playerHit.getPoint();
 					hitSomething = true;
 				} else if ((chestHit = isChestHere(xPos, yPos)) != null) {
-					int newPos = xPos++;
 					chests.remove(chestHit);
-					token = "action:gun:c:" + direction + "#" + x + "#" + y + "#" + newPos + "#" + xPos + "#" + yPos;
+					token = "action:gun:c:" + direction + "#" + x + "#" + y + "#" + (xPos+1) + "#" + xPos + "#" + yPos;
 					hitSomething = true;
 				} else if (level[xPos][yPos].equals("w")) {
-					token = "action:gun:w:" + direction + "#" + x + "#" + y + "#" + xPos++ + "#" + "" + "#" + "";
+					token = "action:gun:w:" + direction + "#" + x + "#" + y + "#" + (xPos+1) + "#" + "" + "#" + "";
 					hitSomething = true;
 				} 
 			}
 
 		} else if (direction.equals("u")) {
 			while (!hitSomething) {
-				yPos++;
+				yPos--;
 				if((playerHit = isPlayerHere(xPos, yPos, null)) != null) {
 					playerHit.subOnePoint();
-					token = "action:gun:p:" + direction + "#" + x + "#" + y + "#" + yPos-- + "#" + playerHit.getName() + "#" + playerHit.getPoint();
+					token = "action:gun:p:" + direction + "#" + x + "#" + y + "#" + (yPos+1) + "#" + playerHit.getName() + "#" + playerHit.getPoint();
 					hitSomething = true;
 				} else if ((chestHit = isChestHere(xPos, yPos)) != null) {
-					int newPos = yPos--;
 					chests.remove(chestHit);
-					token = "action:gun:c:" + direction + "#" + x + "#" + y + "#" + newPos + "#" + xPos + "#" + yPos;
+					token = "action:gun:c:" + direction + "#" + x + "#" + y + "#" + (yPos+1) + "#" + xPos + "#" + yPos;
 					hitSomething = true;
 				} else if (level[xPos][yPos].equals("w")) {
-					token = "action:gun:w:" + direction + "#" + x + "#" + y + "#" + yPos-- + "#" + "" + "#" + "";
+					token = "action:gun:w:" + direction + "#" + x + "#" + y + "#" + (yPos+1) + "#" + "" + "#" + "";
 					hitSomething = true;
 				} 
 			}
 
 		} else if (direction.equals("d")) {
 			while (!hitSomething) {
-				yPos--;
+				yPos++;
 				if((playerHit = isPlayerHere(xPos, yPos, null)) != null) {
 					playerHit.subOnePoint();
-					token = "action:gun:p:" + direction + "#" + x + "#" + y + "#" + yPos++ + "#" + playerHit.getName() + "#" + playerHit.getPoint();
+					token = "action:gun:p:" + direction + "#" + x + "#" + y + "#" + (yPos-1) + "#" + playerHit.getName() + "#" + playerHit.getPoint();
 					hitSomething = true;
 				} else if ((chestHit = isChestHere(xPos, yPos)) != null) {
-					int newPos = yPos++;
 					chests.remove(chestHit);
-					token = "action:gun:c:" + direction + "#" + x + "#" + y + "#" + newPos + "#" + xPos + "#" + yPos;
+					token = "action:gun:c:" + direction + "#" + x + "#" + y + "#" + (yPos-1) + "#" + xPos + "#" + yPos;
 					hitSomething = true;
 				} else if (level[xPos][yPos].equals("w")) {
-					token = "action:gun:w:" + direction + "#" + x + "#" + y + "#" + yPos++ + "#" + "" + "#" + "";
+					token = "action:gun:w:" + direction + "#" + x + "#" + y + "#" + (yPos-1) + "#" + "" + "#" + "";
 					hitSomething = true;
 				} 
 			}
@@ -433,16 +452,41 @@ public class GameHandler {
 		return token;
 	}
 
-	private void useMine(int x, int y, String direction) {
+	private Mine useMine(int x, int y, String direction, Player player) {
+		String token = "";
+		int xPos = x; int yPos = y;
+		Mine m = null;
 		if (direction.equals("r")) {
+			xPos++;
+			if(isPlayerHere(xPos, y , null) == null && isChestHere(xPos, yPos) == null && level[xPos][yPos] != "w"){
+				m = new Mine(player, xPos, yPos);
+				mines.add(m);
+			} 
 
 		} else if (direction.equals("l")) {
+			xPos--;
+			if(isPlayerHere(xPos, y , null) == null && isChestHere(xPos, yPos) == null && level[xPos][yPos] != "w"){
+				m = new Mine(player, xPos, yPos);
+				mines.add(m);
+			} 
 
 		} else if (direction.equals("u")) {
+			yPos--;
+			if(isPlayerHere(x, yPos , null) == null && isChestHere(xPos, yPos) == null && level[xPos][yPos] != "w"){
+				m = new Mine(player, xPos, yPos);
+				mines.add(m);
+			} 
 
 		} else if (direction.equals("d")) {
-
+			yPos++;
+			if(isPlayerHere(x, yPos , null) == null && isChestHere(xPos, yPos) == null && level[xPos][yPos] != "w"){
+				m = new Mine(player, xPos, yPos);
+				mines.add(m);
+			} 
 		}
+		
+		
+		return m;
 	}
 
 	public Player getPlayer(String playerName) {
