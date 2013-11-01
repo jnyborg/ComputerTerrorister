@@ -67,8 +67,7 @@ public class GameServer {
 		}
 	}
 
-	public void addTreasure(String token) throws IOException {
-
+	public void fireEvent(String token) {
 		try {
 			for (int i = 0; i < maxClientsCount; i++) {
 				if (threads[i] != null) {
@@ -79,4 +78,6 @@ public class GameServer {
 			System.out.println(e);
 		}
 	}
+	
+	
 }
