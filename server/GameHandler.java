@@ -135,10 +135,7 @@ public class GameHandler {
 					} else {
 						player.giveWeapon(c.getItemChoice());
 					}
-				} else if (()){
-					
 				}
-
 			}
 			;
 			if (direction.equals("l")) {
@@ -223,9 +220,7 @@ public class GameHandler {
 					result = p;
 				}
 			}
-
 		}
-
 		return result;
 	}
 	
@@ -359,12 +354,12 @@ public class GameHandler {
 
 			}
 		} else if (direction.equals("u")) {
-			if ((playerHit = isPlayerHere(x, y + 1, null)) != null) {
+			if ((playerHit = isPlayerHere(x, y - 1, null)) != null) {
 				playerHit.subOnePoint();
 
 			}
 		} else if (direction.equals("d")) {
-			if ((playerHit = isPlayerHere(x, y - 1, null)) != null) {
+			if ((playerHit = isPlayerHere(x, y + 1, null)) != null) {
 				playerHit.subOnePoint();
 
 			}

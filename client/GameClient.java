@@ -143,7 +143,6 @@ public class GameClient implements Runnable  {
 				System.err.println("IOException:" + e);
 			}
 		}
-		
 	}
 	/*
 	 * Draws the background.
