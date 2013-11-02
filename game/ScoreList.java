@@ -11,10 +11,11 @@ public class ScoreList extends JFrame {
 
 	//Key: PlayerName
 	private HashMap<String, JLabel> labels = new HashMap<String, JLabel>();
+	private JLabel time, lastWinner, scoreHeader;
 
 	
 	public ScoreList() {
-		super("TKgame v. 1.0");
+		super("Computer Terrorister v. 1.6");
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setLocation(600,100);
 		this.setSize(100, 500);
@@ -22,6 +23,18 @@ public class ScoreList extends JFrame {
 		this.setLayout(new GridLayout(20, 20, 0, 0));
 		this.setVisible(true);
 		this.setAlwaysOnTop(true);
+		time = new JLabel();		
+		time.setSize(50,200);		
+		this.add(time);
+		lastWinner = new JLabel();		
+		lastWinner.setSize(50,200);		
+		this.add(lastWinner);
+		scoreHeader = new JLabel("Score:");		
+		scoreHeader.setSize(50,200);		
+		this.add(scoreHeader);
+		
+		
+		
 	}
 //	public void drawPlayer() {
 //		for (int j = 0; j < players.size(); j++) {
@@ -75,6 +88,16 @@ public class ScoreList extends JFrame {
 		
 		
 	}
+
+	public void setTime(String time) {
+		this.time.setText("Time: " + time);
+	}
+
+	public void setLastWinner(String lastWinner) {
+		this.lastWinner.setText("Last winner: " + lastWinner);
+	}
+	
+	
 
 
 	

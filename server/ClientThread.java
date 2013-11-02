@@ -17,6 +17,15 @@ public class ClientThread extends Thread {
 		private String playerName;	
 		private GameHandler gameHandler;
 		ClientThread clientThread;
+		private boolean isReady;
+
+		public boolean isReady() {
+			return isReady;
+		}
+
+		public void setReady(boolean isReady) {
+			this.isReady = isReady;
+		}
 
 		public ClientThread(Socket connection, ClientThread[] threads) {
 			this.connection = connection;
@@ -24,6 +33,7 @@ public class ClientThread extends Thread {
 			maxClientsCount = threads.length;
 			gameHandler = GameHandler.getInstance();
 			clientThread = this;
+			isReady = false;
 		}
 		
 		public void run(){
@@ -49,7 +59,8 @@ public class ClientThread extends Thread {
 						
 						for (int i = 0; i < maxClientsCount; i++) {
 							if (threads[i] == clientThread){
-								output.writeBytes(gameHandler.getAllPlayerTokens() + "\n");
+								output.writeBytes(gameHandler.getGameData() + "\n");
+								isReady = true;
 							} else if (threads[i] != null) {
 								threads[i].output.writeBytes("new:" + gameHandler.getPlayerToken(playerName)+ "\n");
 							}
@@ -65,24 +76,12 @@ public class ClientThread extends Thread {
 				String responseLine;
 				while((responseLine = input.readLine()) != null) {
 					if(responseLine.startsWith("move:")){
-						String newPosition = gameHandler.movePlayer(responseLine.substring(5));
-						if(newPosition.startsWith("p:")){
-							for (int i = 0; i < maxClientsCount; i++) {
-								if (threads[i] != null ) {
-									threads[i].output.writeBytes(newPosition + "\n");
-								}
-							}
-						} 
+						gameHandler.movePlayer(responseLine.substring(5));
+						
 					} else if(responseLine.startsWith("weapon:")) {
 						
-						String token = gameHandler.useWeapon(responseLine.substring(7));
-						if (token != null){
-							for (int i = 0; i < maxClientsCount; i++) {
-								if (threads[i] != null ) {
-									threads[i].output.writeBytes(token + "\n");
-								}
-							}
-						}
+						gameHandler.useWeapon(responseLine.substring(7));
+						
 					}
 				}
 				

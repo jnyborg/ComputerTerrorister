@@ -89,7 +89,7 @@ public class Player {
 			item = ITEM_MINE;
 			ammonition = 1;
 		}
-		System.out.println("has mine with " + ammonition);
+		
 	}
 	
 	public void useWeapon() {
@@ -98,7 +98,7 @@ public class Player {
 		} else {
 			item = ITEM_MELEE;
 		}
-		System.out.println("ammo is now" +ammonition);
+		
 		
 	}
 	

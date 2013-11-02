@@ -14,6 +14,7 @@ import server.GameServer;
 
 public class Screen extends JFrame {
 	private JLabel[][] labels = new JLabel[20][20];
+	private ArrayList<Timer> timers = new ArrayList<Timer>();
 	
 	// Draws the map for the client side
 	private String[][] level = { // put in GameHandler later
@@ -186,13 +187,15 @@ public class Screen extends JFrame {
 	}
 	
 	public void deleteBeam(final ArrayList<String> beams){
-		Timer timer = new Timer();
+		final Timer timer = new Timer();
+		timers.add(timer);
 		TimerTask timerTask = new TimerTask() {
 			@Override
 			public void run() {
 				for(String s: beams){
 					String[] xy = s.split(","); 
 					labels[Integer.parseInt(xy[0])][Integer.parseInt(xy[1])].setIcon(new ImageIcon("./Image/gulv2.png"));
+					timers.remove(timer);
 				}
 			}
 		};
@@ -234,5 +237,15 @@ public class Screen extends JFrame {
 		}
 		// labels[posX][posY].setIcon(
 		// new ImageIcon("./Image/HeltOp.png"));
+	}
+	
+	public void reset() {
+		for (int j = 0; j < 20; j++) {
+			for (int i = 0; i < 20; i++) {
+				labels[i][j] = null;
+
+			}
+
+		}
 	}
 }

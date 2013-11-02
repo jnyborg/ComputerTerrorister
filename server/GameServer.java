@@ -48,8 +48,7 @@ public class GameServer {
 				int i = 0;
 				for (i = 0; i < maxClientsCount; i++) {
 					if (threads[i] == null) {
-						(threads[i] = new ClientThread(connection, threads))
-								.start();
+						(threads[i] = new ClientThread(connection, threads)).start();
 						break;
 					}
 				}
@@ -67,10 +66,10 @@ public class GameServer {
 		}
 	}
 
-	public void fireEvent(String token) {
+	public synchronized void fireEvent(String token) {
 		try {
 			for (int i = 0; i < maxClientsCount; i++) {
-				if (threads[i] != null) {
+				if (threads[i] != null && threads[i].isReady()) {
 					threads[i].getOutput().writeBytes(token);
 				}
 			}

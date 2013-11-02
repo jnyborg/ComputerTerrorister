@@ -13,6 +13,7 @@ public class KeyClass implements KeyListener {
 		public void keyPressed(KeyEvent ke) {
 			if (ke.getKeyCode() == ke.VK_UP) {
 				g.movePlayer("u");
+				System.out.println("wrok");
 				
 			}
 			if (ke.getKeyCode() == ke.VK_DOWN) {

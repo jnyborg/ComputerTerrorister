@@ -18,6 +18,8 @@ import java.util.TimerTask;
 public class GameHandler {
 	// SingleTon
 	private static GameHandler instance = null;
+	private static Timer timer;
+	private static int interval;
 
 	public static GameHandler getInstance() {
 		if (instance == null) {
@@ -26,8 +28,7 @@ public class GameHandler {
 		return instance;
 	}
 
-	private List<Player> players;
-	private ScoreList scoreList;
+	private static List<Player> players;
 	private String[][] level = {
 			{ "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w",
 				"w", "w", "w", "w", "w", "w", "w" },
@@ -70,9 +71,9 @@ public class GameHandler {
 			{ "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w", "w",
 				"w", "w", "w", "w", "w", "w", "w" }, };
 
-	private ArrayList<String> spawns = new ArrayList<String>();
-	private ArrayList<Chest> chests = new ArrayList<Chest>();
-	private ArrayList<Mine> mines = new ArrayList<Mine>();
+	private static ArrayList<String> spawns = new ArrayList<String>();
+	private static ArrayList<Chest> chests = new ArrayList<Chest>();
+	private static ArrayList<Mine> mines = new ArrayList<Mine>();
 
 	/*
 	 * Constructor to initialize the list of players
@@ -81,6 +82,8 @@ public class GameHandler {
 		players = new ArrayList<Player>();
 		calculateSpawns();
 		createTreasures();
+		timer = new Timer();
+		gameTimer();
 	}
 
 	public void createTreasures() {
@@ -95,7 +98,7 @@ public class GameHandler {
 				GameServer.getInstance().fireEvent(chest.getToken());
 			}
 		};
-		timer.schedule(timerTask, 2000, 10000);
+		timer.schedule(timerTask, 6000, 6000);
 	}
 
 	public void calculateSpawns() {
@@ -108,7 +111,7 @@ public class GameHandler {
 		}
 	}
 	
-	public String movePlayer(String moveData) {
+	public void movePlayer(String moveData) {
 		//Setup
 		String[] data = moveData.split("#");
 		Player player = getPlayer(data[0]);
@@ -164,7 +167,7 @@ public class GameHandler {
 					+ "#" + y + "#" + direction + "#" + player.getPoint();
 		}
 		
-		return result;	
+		GameServer.getInstance().fireEvent(result+"\n");	
 		
 	}
 
@@ -196,14 +199,6 @@ public class GameHandler {
 
 	public void setPlayers(List<Player> players) {
 		this.players = players;
-	}
-
-	public ScoreList getScoreList() {
-		return scoreList;
-	}
-
-	public void setScoreList(ScoreList scoreList) {
-		this.scoreList = scoreList;
 	}
 	
 	public boolean isX(String direction) {
@@ -265,16 +260,24 @@ public class GameHandler {
 	 * 
 	 * @return the token
 	 */
-	public String getAllPlayerTokens() {
-		String result = "";
+	public static String getGameData() {
+		String result = "newgame:";
 		for (Player p : players) {
 			result += p.getName() + "#" + p.getXpos() + "#" + p.getYpos() + "#"
 					+ p.getDirection() + "#" + p.getPoint() + "¤";
 		}
+		result += "%c:";
+		for (Chest c : chests) {
+			result += c.getX()+"#"+c.getY()+"¤";
+		}
+		result += "%m:";
+		for (Mine m : mines) {
+			result += m.getX() + "#" + m.getY() + "¤";
+		}
 		return result;
 	}
 
-	public String getRandomSpawn() {
+	public static String getRandomSpawn() {
 		Random random = new Random();
 		return spawns.get(random.nextInt(spawns.size() - 1));
 	}
@@ -288,8 +291,7 @@ public class GameHandler {
 		return null;
 	}
 
-	public String useWeapon(String playerName) {
-		System.out.println(playerName);
+	public void useWeapon(String playerName) {
 		String token = null;
 		Player player = getPlayer(playerName);
 		int x = player.getXpos();
@@ -311,7 +313,7 @@ public class GameHandler {
 				m.startTimer();
 			} 
 		}
-		return token;
+		GameServer.getInstance().fireEvent(token+"\n");
 
 	}
 
@@ -446,6 +448,42 @@ public class GameHandler {
 			}
 		}
 		return player;
+	}
+	
+	public static void gameTimer() {
+		int delay = 1000;
+		int period = 1000;
+		timer.scheduleAtFixedRate(new TimerTask() {
+			
+			@Override
+			public void run() {
+				setInterval();
+				GameServer.getInstance().fireEvent("time:"+interval + "\n");
+				
+			}
+		}, delay, period);
+	}
+	
+	private static final int setInterval() {
+		if (interval == 0) {
+			interval = 120;
+			chests.clear();
+			mines.clear();
+			resetGame();
+		}
+		return --interval;
+	}
+	
+	public static void resetGame() {
+		chests.clear();
+		mines.clear();
+		for (Player p : players) {
+			p.setPoint(0);
+			String[] result = getRandomSpawn().split("#");
+			p.setXpos(Integer.parseInt(result[0]));
+			p.setYpos(Integer.parseInt(result[1]));
+		}
+		GameServer.getInstance().fireEvent(getGameData() + "\n");
 	}
 
 }

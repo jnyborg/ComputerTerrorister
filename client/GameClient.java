@@ -26,6 +26,7 @@ public class GameClient implements Runnable  {
 	private static String playerName;
 
 	public static void main(String[] args) {
+//		host = args[0];
 		new Thread(new GameClient()).start();
 	}
 
@@ -64,7 +65,6 @@ public class GameClient implements Runnable  {
 						playerName = tempName;
 						//Listen to next input from server, which should be a token with player info
 						responseLine = input.readLine();
-						System.out.println("responseline: " + responseLine);
 						init(responseLine);
 						nameOk = true;
 					}
@@ -98,7 +98,6 @@ public class GameClient implements Runnable  {
 					}
 					//Player action
 					else if(responseLine.startsWith("action:")){
-						System.out.println("Received action");
 						String[] actions = responseLine.split("¤");
 						for (String s : actions) {
 							String action = s.substring(7);
@@ -138,7 +137,39 @@ public class GameClient implements Runnable  {
 						}
 						
 						
+					} else if (responseLine.startsWith("time:")) {
+						scoreList.setTime(responseLine.substring(5));
+						
+					} else if (responseLine.startsWith("newgame:")) {
+						responseLine = responseLine.substring(8);
+						String[] gameData = responseLine.split("%");
+						String[] players = gameData[0].split("¤");
+						String[] chests = gameData[1].substring(2).split("¤");
+						String[] mines = gameData[2].substring(2).split("¤");
+						screen.dispose();
+						screen = new Screen();
+						keyClass = new KeyClass(this);
+						screen.addKeyListener(keyClass);
+						System.out.println(responseLine);
+						for (String p : players) {
+							String[] playerData = p.split("#");
+							screen.drawPlayer(Integer.parseInt(playerData[1]), Integer.parseInt(playerData[2]), playerData[3]);
+							scoreList.updateScore(playerData[0], playerData[4]);
+						}
+						if (!chests[0].equals("")) {
+							for (String c : chests) {
+								String[] chestData = c.split("#");
+								screen.drawTreasure(Integer.parseInt(chestData[0]), Integer.parseInt(chestData[1]));
+							}
+						}
+						if (!mines[0].equals("")) {
+							for (String m : mines) {
+								String[] mineData = m.split("#");
+								screen.placeMine(Integer.parseInt(mineData[0]), Integer.parseInt(mineData[1]));
+							}
+						}
 					}
+					
 				}
 			
 				//close connection
@@ -154,16 +185,33 @@ public class GameClient implements Runnable  {
 	 * Draws the background.
 	 */
 	public void init(String responseLine) {
+		
 		screen = new Screen();
 		keyClass = new KeyClass(this);
 		screen.addKeyListener(keyClass);
 		scoreList = new ScoreList();
 		scoreList.setVisible(true);
-		String[] playerDatas = responseLine.split("¤");
-		for (String s : playerDatas) {
-			String[] playerData = s.split("#");
+		responseLine = responseLine.substring(8);
+		String[] gameData = responseLine.split("%");
+		String[] players = gameData[0].split("¤");
+		String[] chests = gameData[1].substring(2).split("¤");
+		String[] mines = gameData[2].substring(2).split("¤");
+		for (String p : players) {
+			String[] playerData = p.split("#");
 			screen.drawPlayer(Integer.parseInt(playerData[1]), Integer.parseInt(playerData[2]), playerData[3]);
 			scoreList.addPlayer(playerData[0], playerData[4]);
+		}
+		if (!chests[0].equals("")) {
+			for (String c : chests) {
+				String[] chestData = c.split("#");
+				screen.drawTreasure(Integer.parseInt(chestData[0]), Integer.parseInt(chestData[1]));
+			}
+		}
+		if (!mines[0].equals("")) {
+			for (String m : mines) {
+				String[] mineData = m.split("#");
+				screen.placeMine(Integer.parseInt(mineData[0]), Integer.parseInt(mineData[1]));
+			}
 		}
 	}
 	
