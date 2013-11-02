@@ -59,7 +59,7 @@ public class Screen extends JFrame {
 				"w", "w", "w", "w", "w", "w", "w" }, };
 
 	public Screen() {
-		super("TKgame v. 1.0");
+		super("Computer Terrorister");
 
 		this.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
 		this.setLocation(100,0);
