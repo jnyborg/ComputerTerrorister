@@ -76,7 +76,13 @@ public class GameClient implements Runnable  {
 				while ((responseLine = input.readLine()) != null) {
 					//Player changed position
 					if (responseLine.startsWith("p:")) {
-						String[] playerData = responseLine.substring(2).split("#");
+						String [] playerData;
+						if(responseLine.substring(2).startsWith("chest:")){
+							playerData = responseLine.substring(8).split("#");
+							scoreList.updateScore(playerData[0], playerData[6]);
+						}else{
+							playerData = responseLine.substring(2).split("#");
+						}
 						screen.movePlayerOnScreen(Integer.parseInt(playerData[1]), Integer.parseInt(playerData[2]), Integer.parseInt(playerData[3]), Integer.parseInt(playerData[4]), playerData[5]);
 					}
 					//New player joined

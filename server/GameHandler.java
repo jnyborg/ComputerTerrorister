@@ -147,7 +147,7 @@ public class GameHandler {
 					player.giveWeapon(c.getItemChoice());
 				}
 				player.setXpos(x);player.setYpos(y);
-				result = "p:" + player.getName() + "#" + oldX + "#" + oldY + "#" + x
+				result = "p:chest:" + player.getName() + "#" + oldX + "#" + oldY + "#" + x
 						+ "#" + y + "#" + direction + "#" + player.getPoint();
 			} 
 			//Move player as normal
