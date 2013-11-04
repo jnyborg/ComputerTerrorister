@@ -31,7 +31,7 @@ public class GameClient implements Runnable  {
 	}
 
 	public void run() {
-		host = "localhost"; // The IP you connect to. For debugging purposes: localhost
+		host = "192.168.1.159"; // The IP you connect to. For debugging purposes: localhost
 		port = 2222; // The post the socket listens to.
 		/*
 		 * Open a socket on a given host and port. Open input and output streams.
@@ -58,7 +58,7 @@ public class GameClient implements Runnable  {
 				String responseLine;
 				boolean nameOk = false;		
 				while(!nameOk){
-					System.out.println(responseLine = input.readLine());
+					System.out.println(responseLine = input.readLine()); // DONT DELETE
 					String tempName = inputLine.readLine();
 					output.writeBytes(tempName+"\n");
 					if((responseLine = input.readLine()).startsWith("Welcome")){
