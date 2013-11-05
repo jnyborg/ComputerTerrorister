@@ -13,7 +13,7 @@ public class ClientThread extends Thread {
 		private BufferedReader input = null;
 		private DataOutputStream output = null;
 		private Socket connection;
-		private int maxClientsCount; //Maximum allowed clients in the game
+		private int maxClientsCount; //Maximum allowed players in the game
 		private final ClientThread[] threads;
 		private String playerName;	
 		private GameHandler gameHandler;

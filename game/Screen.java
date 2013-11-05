@@ -78,6 +78,9 @@ public class Screen extends JFrame {
 		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
 	
+	/*
+	 * Moves player on screen
+	 */
 	public void movePlayerOnScreen(int oldX, int oldY, int x, int y,
 			String playerDirection) {
 
@@ -138,7 +141,10 @@ public class Screen extends JFrame {
 	
 	public void fireGun(String direction, int oldX, int oldY, int hitXY){
 		ArrayList<String> beams = new ArrayList<String>();
-		//shooting right
+		
+		/*
+		 * Shooting in the right direction
+		 */
 		if(direction.equals("r")){
 			for(int i = (oldX+1); i <= hitXY; i++){
 				if(i == (oldX+1)){
@@ -152,7 +158,9 @@ public class Screen extends JFrame {
 			}
 			deleteBeam(beams);
 			
-			//shooting left
+			/*
+			 * Shooting in the left direction
+			 */
 		}else if(direction.equals("l")){
 			for(int i = (oldX-1); i >= hitXY; i--){
 				if(i == (oldX-1)){
@@ -166,9 +174,11 @@ public class Screen extends JFrame {
 			}
 			deleteBeam(beams);
 			
-		//shooting up
+			/*
+			 * Shooting in the upwards direction
+			 */
 		}else if(direction.equals("u")){
-			System.out.println("oldY: " +  oldY + " hitXY: " + hitXY);
+			System.out.println(" Hit at: oldY: " +  oldY + " hitXY: " + hitXY);
 			for(int i = (oldY-1); i >= hitXY; i--){
 				if(i == (oldY-1)){
 					labels[oldX][oldY-1].setIcon(new ImageIcon("./Image/ildOp.png"));
@@ -181,7 +191,9 @@ public class Screen extends JFrame {
 			}
 			deleteBeam(beams);
 		
-		//shooting down
+		/*
+		 * Shooting in the downwards direction
+		 */
 		}else if(direction.equals("d")){
 			for(int i = (oldY+1); i <= hitXY; i++){
 				if(i == (oldY+1)){
@@ -197,6 +209,9 @@ public class Screen extends JFrame {
 		}
 	}
 	
+	/*
+	 * Removes the pistol beam
+	 */
 	public void deleteBeam(final ArrayList<String> beams){
 		final Timer timer = new Timer();
 		timers.add(timer);
@@ -227,7 +242,10 @@ public class Screen extends JFrame {
 		labels[x][y].setIcon(new ImageIcon("./Image/gulv2.png"));
 	}
 	
-
+	
+	/*
+	 * Draws the playing board
+	 */
 	public void draw() {
 		for (int j = 0; j < 20; j++) {
 			for (int i = 0; i < 20; i++) {
@@ -246,10 +264,12 @@ public class Screen extends JFrame {
 			}
 
 		}
-		// labels[posX][posY].setIcon(
-		// new ImageIcon("./Image/HeltOp.png"));
+	
 	}
 	
+	/*
+	 * Resets the game
+	 */
 	public void reset() {
 		for (int j = 0; j < 20; j++) {
 			for (int i = 0; i < 20; i++) {
