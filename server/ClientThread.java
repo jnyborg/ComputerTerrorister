@@ -2,6 +2,7 @@ package server;
 
 import java.io.BufferedReader;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.Socket;
@@ -66,7 +67,8 @@ public class ClientThread extends Thread {
 							}
 						}
 					} else {
-						output.writeBytes(nameToCheck + " is already taken! Please try again.\n");
+						System.out.println("name is taken yo");
+						output.writeBytes(nameToCheck + "\n");
 					}
 				}
 				
@@ -77,11 +79,11 @@ public class ClientThread extends Thread {
 				while((responseLine = input.readLine()) != null) {
 					if(responseLine.startsWith("move:")){
 						gameHandler.movePlayer(responseLine.substring(5));
-						
-					} else if(responseLine.startsWith("weapon:")) {
-						
-						gameHandler.useWeapon(responseLine.substring(7));
-						
+					}else if(responseLine.startsWith("weapon:")) {
+						gameHandler.useWeapon(responseLine.substring(7));	
+					}else if(responseLine.equals("quit")){
+						gameHandler.removePlayer(playerName);
+						break;
 					}
 				}
 				
@@ -95,12 +97,8 @@ public class ClientThread extends Thread {
 				/*
 				 * Close output, input and connection(socket).
 				 */
-				input.close();
-				output.close();
-				connection.close();
-				
-			} 
-			catch (IOException e) {
+				closeConnection();
+			}catch (IOException e) {
 				//do nothing
 			}
 		}
@@ -109,7 +107,7 @@ public class ClientThread extends Thread {
 			boolean nameFound = false;	
 			for (int i = 0; i < maxClientsCount; i++) {
 				if (threads[i] != null && threads[i] != this ) {
-					if (threads[i].getPlayerName() == playerName) {
+					if (threads[i].getPlayerName().equals(playerName)) {
 						return nameFound = true;
 					}
 				}
@@ -127,6 +125,16 @@ public class ClientThread extends Thread {
 		
 		public DataOutputStream getOutput(){
 			return output;
+		}
+		
+		public void closeConnection(){
+			try{
+				input.close();
+				output.close();
+				connection.close();
+			}catch (IOException e){
+				System.err.println(e);
+			}
 		}
 		
 }

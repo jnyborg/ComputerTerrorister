@@ -7,10 +7,12 @@ import game.ScoreList;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 /*
  * Handles the player movements
@@ -79,7 +81,7 @@ public class GameHandler {
 	 * Constructor to initialize the list of players
 	 */
 	public GameHandler() {
-		players = new ArrayList<Player>();
+		players = new CopyOnWriteArrayList<Player>();
 		calculateSpawns();
 		createTreasures();
 		timer = new Timer();
@@ -235,6 +237,17 @@ public class GameHandler {
 		player.setXpos(Integer.parseInt(position[0]));
 		player.setYpos(Integer.parseInt(position[1]));
 		players.add(player);
+	}
+	
+	public void removePlayer(String name){
+		Player player = null;
+		for(Player p: players){
+			if(p.getName().equals(name)){
+				player = p;
+				players.remove(p);
+			}
+		}
+		GameServer.getInstance().fireEvent("disconnected:" + player.getName() +"#" + player.getXpos() + "#" + player.getYpos() + "\n");
 	}
 
 	/**
@@ -477,6 +490,7 @@ public class GameHandler {
 	public static void resetGame() {
 		chests.clear();
 		mines.clear();
+		sendLastWinner();
 		for (Player p : players) {
 			p.setPoint(0);
 			String[] result = getRandomSpawn().split("#");
@@ -484,6 +498,19 @@ public class GameHandler {
 			p.setYpos(Integer.parseInt(result[1]));
 		}
 		GameServer.getInstance().fireEvent(getGameData() + "\n");
+		
 	}
-
+	
+	public static void sendLastWinner(){
+		if(players.size() != 0 ){
+			int points = players.get(0).getPoint();
+			Player winner = players.get(0);
+			for(Player p: players){
+				if(p.getPoint() > points){
+					winner = p;
+				}
+			}
+			GameServer.getInstance().fireEvent("winner:" + winner.getName() + "#" + winner.getPoint() + "\n") ;
+		}
+	}
 }

@@ -1,6 +1,8 @@
 package game;
 
 import java.awt.GridLayout;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -9,7 +11,9 @@ import java.util.TimerTask;
 import javax.swing.ImageIcon;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.WindowConstants;
 
+import client.GameClient;
 import server.GameServer;
 
 public class Screen extends JFrame {
@@ -70,8 +74,10 @@ public class Screen extends JFrame {
 		draw();
 		this.setAlwaysOnTop(true);
 		this.setVisible(true);
+		this.addWindowListener(new WindowEventHandler());
+		this.setDefaultCloseOperation(WindowConstants.DISPOSE_ON_CLOSE);
 	}
-
+	
 	public void movePlayerOnScreen(int oldX, int oldY, int x, int y,
 			String playerDirection) {
 
@@ -119,6 +125,11 @@ public class Screen extends JFrame {
 		}
 		;
 
+	}
+	
+	public void removePlayer(Integer x, Integer y){
+			labels[x][y].setIcon(new ImageIcon("./Image/Gulv2.png"));
+			System.out.println("Removing player på: " +x +"," + y);
 	}
 	
 	public void drawTreasure(int x, int y) {
@@ -205,7 +216,7 @@ public class Screen extends JFrame {
 	}
 	
 	public void meleeHit(String playerName, int score){
-		System.out.println("player: " + playerName + " is hitting");
+		//is we wanted to draw animation for melee hit
 	}
 	
 	public void placeMine(int x, int y){
@@ -243,9 +254,17 @@ public class Screen extends JFrame {
 		for (int j = 0; j < 20; j++) {
 			for (int i = 0; i < 20; i++) {
 				labels[i][j] = null;
-
 			}
-
 		}
 	}
 }
+
+class WindowEventHandler extends WindowAdapter {
+
+  public void windowClosing(WindowEvent evt) {
+	GameClient.disconnect();
+    System.exit(0);
+  }
+
+}
+

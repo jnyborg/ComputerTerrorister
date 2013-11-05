@@ -47,6 +47,10 @@ public class GameClient implements Runnable  {
 			System.err.println("Couldn't get I/O for the connection to the host "
 					+ host);
 		}
+		
+		
+		
+		
 		/*
 		 * If everything is setup correct
 		 */
@@ -67,11 +71,13 @@ public class GameClient implements Runnable  {
 						responseLine = input.readLine();
 						init(responseLine);
 						nameOk = true;
+					}else{
+						System.out.println(responseLine + " is already taken.");
 					}
 				}
 				
 				/*
-				 * Listen to responses from server, and take appropriate action
+				 * Listen to responses from server when name is okay, and take appropriate action
 				 */
 				while ((responseLine = input.readLine()) != null) {
 					//Player changed position
@@ -90,6 +96,13 @@ public class GameClient implements Runnable  {
 						String[] playerData = responseLine.substring(4).split("#");
 						screen.drawPlayer(Integer.parseInt(playerData[1]), Integer.parseInt(playerData[2]), playerData[3]);
 						scoreList.addPlayer(playerData[0], playerData[4]);
+					}
+					//Player disconnects
+					else if(responseLine.startsWith("disconnected:")){
+						responseLine = responseLine.substring(13);
+						String[] playerInfo = responseLine.split("#");
+						scoreList.removePlayer(playerInfo[0]);
+						screen.removePlayer(Integer.parseInt(playerInfo[1]), Integer.parseInt(playerInfo[2]));
 					}
 					//Treasure spawned
 					else if (responseLine.startsWith("t:")) {
@@ -136,10 +149,11 @@ public class GameClient implements Runnable  {
 							}
 						}
 						
-						
+					// handles the time, fires once every second
 					} else if (responseLine.startsWith("time:")) {
 						scoreList.setTime(responseLine.substring(5));
-						
+					
+					// handles action for a player when he joins, get information about all players, treasures and mines.
 					} else if (responseLine.startsWith("newgame:")) {
 						responseLine = responseLine.substring(8);
 						String[] gameData = responseLine.split("%");
@@ -150,7 +164,6 @@ public class GameClient implements Runnable  {
 						screen = new Screen();
 						keyClass = new KeyClass(this);
 						screen.addKeyListener(keyClass);
-						System.out.println(responseLine);
 						for (String p : players) {
 							String[] playerData = p.split("#");
 							screen.drawPlayer(Integer.parseInt(playerData[1]), Integer.parseInt(playerData[2]), playerData[3]);
@@ -169,7 +182,14 @@ public class GameClient implements Runnable  {
 							}
 						}
 					}
-					
+					// sets the winner label on the scoreList when a game is over
+					else if(responseLine.startsWith("winner:")){
+						System.out.println("Winner");
+						responseLine = responseLine.substring(7);
+						System.out.println(responseLine);
+						String[] winnerInfo = responseLine.split("#");
+						scoreList.setLastWinner(winnerInfo[0] + " with " + winnerInfo[1] + " points.");
+					}
 				}
 			
 				//close connection
@@ -231,6 +251,14 @@ public class GameClient implements Runnable  {
 		try {
 			output.writeBytes("weapon:" + playerName +"\n");
 		} catch (IOException e) {
+			System.err.println(e);
+		}
+	}
+	
+	public static void disconnect(){
+		try{
+			output.writeBytes("quit\n");
+		}catch(IOException e){
 			System.err.println(e);
 		}
 	}

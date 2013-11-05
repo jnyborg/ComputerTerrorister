@@ -13,20 +13,15 @@ public class KeyClass implements KeyListener {
 		public void keyPressed(KeyEvent ke) {
 			if (ke.getKeyCode() == ke.VK_UP) {
 				g.movePlayer("u");
-				System.out.println("wrok");
-				
 			}
 			if (ke.getKeyCode() == ke.VK_DOWN) {
 				g.movePlayer("d");
-				
 			}
 			if (ke.getKeyCode() == ke.VK_LEFT) {
 				g.movePlayer("l");
-				
 			}
 			if (ke.getKeyCode() == ke.VK_RIGHT) {
 				g.movePlayer("r");
-				
 			}
 			if (ke.getKeyCode() == ke.VK_SPACE) {
 				g.useWeapon();

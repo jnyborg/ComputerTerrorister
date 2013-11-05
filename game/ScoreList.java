@@ -2,6 +2,8 @@ package game;
 
 import java.awt.GridLayout;
 import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
@@ -85,8 +87,13 @@ public class ScoreList extends JFrame {
 		this.add(l);
 		l.setText(player + ": " + score);
 		labels.put(player, l);
-		
-		
+	}
+	
+	public void removePlayer(String player){
+		System.out.println("removeing " + player);
+		this.remove(labels.get(player));
+		labels.remove(labels.get(player));
+		repaint();
 	}
 
 	public void setTime(String time) {
@@ -94,7 +101,7 @@ public class ScoreList extends JFrame {
 	}
 
 	public void setLastWinner(String lastWinner) {
-		this.lastWinner.setText("Last winner: " + lastWinner);
+		this.lastWinner.setText("The last winner is " + lastWinner);
 	}
 	
 	
