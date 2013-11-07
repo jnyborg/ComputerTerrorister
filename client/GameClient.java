@@ -31,7 +31,7 @@ public class GameClient implements Runnable  {
 	}
 
 	public void run() {
-		host = "192.168.1.159"; // The IP you connect to. For debugging purposes: localhost
+			host = "localhost";  // The IP you connect to. For debugging purposes: localhost
 		port = 2222; // The post the socket listens to.
 		/*
 		 * Open a socket on a given host and port. Open input and output streams.
@@ -184,9 +184,8 @@ public class GameClient implements Runnable  {
 					}
 					// sets the winner label on the scoreList when a game is over
 					else if(responseLine.startsWith("winner:")){
-						System.out.println("Winner");
 						responseLine = responseLine.substring(7);
-						System.out.println(responseLine);
+//						System.out.println(responseLine);
 						String[] winnerInfo = responseLine.split("#");
 						scoreList.setLastWinner(winnerInfo[0] + " with " + winnerInfo[1] + " points.");
 					}

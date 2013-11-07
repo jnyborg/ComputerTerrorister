@@ -67,7 +67,6 @@ public class ClientThread extends Thread {
 							}
 						}
 					} else {
-						System.out.println("name is taken yo");
 						output.writeBytes(nameToCheck + "\n");
 					}
 				}

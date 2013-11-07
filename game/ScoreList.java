@@ -90,7 +90,6 @@ public class ScoreList extends JFrame {
 	}
 	
 	public void removePlayer(String player){
-		System.out.println("removeing " + player);
 		this.remove(labels.get(player));
 		labels.remove(labels.get(player));
 		repaint();

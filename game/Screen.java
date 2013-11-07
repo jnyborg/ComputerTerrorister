@@ -132,7 +132,6 @@ public class Screen extends JFrame {
 	
 	public void removePlayer(Integer x, Integer y){
 			labels[x][y].setIcon(new ImageIcon("./Image/Gulv2.png"));
-			System.out.println("Removing player på: " +x +"," + y);
 	}
 	
 	public void drawTreasure(int x, int y) {
@@ -178,7 +177,6 @@ public class Screen extends JFrame {
 			 * Shooting in the upwards direction
 			 */
 		}else if(direction.equals("u")){
-			System.out.println(" Hit at: oldY: " +  oldY + " hitXY: " + hitXY);
 			for(int i = (oldY-1); i >= hitXY; i--){
 				if(i == (oldY-1)){
 					labels[oldX][oldY-1].setIcon(new ImageIcon("./Image/ildOp.png"));
