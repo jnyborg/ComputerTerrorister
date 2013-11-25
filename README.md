@@ -4,12 +4,12 @@ ComputerTerrorister
 
 A simple client/server networkgame written in Java as a school project.
 
-1 launch Command Prompt 
+To run jar, type java -jar jarfile.jar in console.
 
-2 cd TO-WHERE-CLIENT-IS
+First, run server.jar by doing this. 
 
-3 type in: "java -jar clint.jar 168.192.xxx.xxx" without the quotes
+Then, run client.jar localhost/server ip
 
-4 type in your player name 
+
 
 
